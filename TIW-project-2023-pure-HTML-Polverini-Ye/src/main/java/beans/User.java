@@ -1,16 +1,18 @@
 package beans;
 
+import java.util.Date;
+
 public class User {
 	private String mail;
 	private String password;
 	private String name;
 	private String surname;
-	private String birth_date;
-	private String subscription_date;
+	private Date birth_date;
+	private Date subscription_date;
 	private String telephone;
 	private String address;
 	
-	public User(String mail, String password, String name, String surname, String birth_date, String subscription_date, String telephone, String address) {
+	public User(String mail, String password, String name, String surname, Date birth_date, Date subscription_date, String telephone, String address) {
 		this.mail = mail;
 		this.password = password;
 		this.name = name;
@@ -53,19 +55,19 @@ public class User {
         this.surname = surname;
     }
     
-    public String getBirth_date() {
+    public Date getBirth_date() {
         return birth_date;
     }
     
-    public void setBirth_date(String birth_date) {
+    public void setBirth_date(Date birth_date) {
         this.birth_date = birth_date;
     }
     
-    public String getSubscription_date() {
+    public Date getSubscription_date() {
         return subscription_date;
     }
     
-    public void setSubscription_date(String subscription_date) {
+    public void setSubscription_date(Date subscription_date) {
         this.subscription_date = subscription_date;
     }
     
