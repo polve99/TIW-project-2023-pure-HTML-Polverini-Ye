@@ -6,12 +6,14 @@ public class Bid {
     private float bidValue;
     private String bidDateTime;
     private String userMail;
+    private int idAuction;
 
-    public Bid(int bidId, float bidValue, String bidDateTime, String userMail) {
+    public Bid(int bidId, float bidValue, String bidDateTime, String userMail, int idAuction) {
         this.bidId = bidId;
         this.bidValue = bidValue;
         this.bidDateTime = bidDateTime;
         this.userMail = userMail;
+        this.idAuction = idAuction;
     }
 
     public int getBidId() {
@@ -45,5 +47,13 @@ public class Bid {
     public void setUserMail(String userMail) {
         this.userMail = userMail;
     }
-    
+
+    public int getIdAuction() {
+        return idAuction;
+    }
+
+    public void setIdAuction(int idAuction) {
+        this.idAuction = idAuction;
+    }
+
 }
