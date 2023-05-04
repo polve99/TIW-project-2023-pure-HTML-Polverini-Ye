@@ -14,7 +14,14 @@ public class Bid {
     	
     }
 
+<<<<<<< HEAD
     public Bid(int bidId, String userMail, float bidValue, Timestamp bidDateTime, int idAuction) {
+=======
+    public Bid() {
+    }
+
+    public Bid(int bidId, float bidValue, String bidDateTime, String userMail, int idAuction) {
+>>>>>>> refs/remotes/origin/master
         this.bidId = bidId;
         this.bidValue = bidValue;
         this.bidDateTime = bidDateTime;

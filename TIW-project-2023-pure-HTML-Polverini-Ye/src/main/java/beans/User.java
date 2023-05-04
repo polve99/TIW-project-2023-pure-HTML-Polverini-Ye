@@ -13,6 +13,9 @@ public class User {
     private String telephone;
     private String address;
 
+    public User() {
+    }
+
     public User(String mail, String password, String name, String surname, Date birth_date, Date subscription_date, String telephone, String address) {
         this.mail = mail;
         this.password = password;
