@@ -1,62 +1,62 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8">
-    <title>Login to BidWars</title>
-    <link rel="stylesheet" type="text/css" media="all" href="../css/mystyle.css" th:href="@{/css/indexStyle.css}" />
-    <link rel="stylesheet" type="text/css" media="all" href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
-</head>
-<body>
-<h1 align = "center">Welcome to BidWars</h1>
-<h2 align = "center">Insert your credentials if you already have an account</h2>
-
-<div class = "loginContainer">
-
-    <div class = "loginSection">
-        <div class = "sectionHeading">
-            <h2>Login</h2>
-        </div>
-
-        <form action = "Login" method = "post" >
-            <fieldset>
-                <p><label>E-mail</label>
-                    <input type = "text" name = "email" required></p>
-                <p><label>Password</label>
-                    <input type = "password" name = "password" required></p>
-                <input type = "submit" value = "Login">
-            </fieldset>
-        </form>
-
-        <div class = "changeAutMethod">
-
-            <p class = "changeAutMethodInfo">
-                Don't have an account?
-                <a id = "registerAnchor" href = "Registration.html">Register</a>
-            </p>
-        </div>
-
-    </div>
-
-    <!-- <div class = "registrationSection">
-        <div class = "sectionHeading">
-                <h2>Registration</h2>
-            </div>
-        <form action = "Registration" method = "post" id = "registration">
-            <label>Username</label>
-            <input type = "text" name = "username" required><br>
-            <label>Email</label>
-            <input type = "email" name = "email" required><br>
-            <label>Password</label>
-            <input type = "password" name = "password" required><br>
-            <label>Repeat Password</label>
-            <input type = "password" name = "repeatedPassword" required><br>
-            <div class = "changeAutMethod">
-                <input type = "submit" value = "Registration" id = "registrationButton">
-                <a id = "loginAnchor" href = "Welcome" th:href="Welcome">Login</a>
-            </div>
-        </form>
-    </div>-->
-
-</div>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<title>Insert title here</title>
+		<link rel="stylesheet" type="text/css" media="all" href="../css/mystyle.css" th:href="@{/css/indexStyle.css}" />
+		<link rel="stylesheet" type="text/css" media="all" href="../css/mystyle.css" th:href="@{/css/mystyle.css}" />
+	</head>
+	<body>
+		<h1 align = "center">Welcome to BidWars</h1>
+		<h2 align = "center">Insert your credentials if you already have an account</h2>
+		
+		<div class = "loginContainer">
+		
+			<div class = "loginSection">
+				<div class = "sectionHeading">
+					<h2>Login</h2>
+				</div>
+				
+				<form action = "Login" method = "post" >	
+					<fieldset>				
+						<p><label>E-mail</label>
+						<input type = "text" name = "email" required></p>
+						<p><label>Password</label>
+						<input type = "password" name = "password" required></p>
+						<input type = "submit" value = "Login">
+					</fieldset>
+				</form>
+					
+					<div class = "changeAutMethod">
+						
+						<p class = "changeAutMethodInfo">
+							Don't have an account? 
+							<a id = "registerAnchor" href = "Registration.html">Register</a>
+						</p>	
+					</div>
+				
+			</div>
+			
+			<!-- <div class = "registrationSection">
+				<div class = "sectionHeading">
+						<h2>Registration</h2>
+					</div>
+				<form action = "Registration" method = "post" id = "registration">
+					<label>Username</label>
+					<input type = "text" name = "username" required><br>
+					<label>Email</label>
+					<input type = "email" name = "email" required><br>
+					<label>Password</label>
+					<input type = "password" name = "password" required><br>
+					<label>Repeat Password</label>
+					<input type = "password" name = "repeatedPassword" required><br>
+					<div class = "changeAutMethod">
+						<input type = "submit" value = "Registration" id = "registrationButton">
+						<a id = "loginAnchor" href = "Welcome" th:href="Welcome">Login</a>
+					</div>
+				</form>
+			</div>-->
+			
+		</div>
+	</body>
 </html>
