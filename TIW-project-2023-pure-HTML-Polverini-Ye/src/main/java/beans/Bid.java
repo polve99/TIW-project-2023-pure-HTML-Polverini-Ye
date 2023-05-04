@@ -8,6 +8,9 @@ public class Bid {
     private String userMail;
     private int idAuction;
 
+    public Bid() {
+    }
+
     public Bid(int bidId, float bidValue, String bidDateTime, String userMail, int idAuction) {
         this.bidId = bidId;
         this.bidValue = bidValue;

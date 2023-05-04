@@ -1,5 +1,7 @@
 package beans;
 
+import java.util.ArrayList;
+
 public class Auction {
 
     private int idAuction;
@@ -8,15 +10,20 @@ public class Auction {
     private String expirationDateTime;
     private String userMail;
 
+    private ArrayList<Article> articles;
+
+    private boolean isOpen = true;
+
     public Auction() {
     }
 
-    public Auction(int idAuction, float initialPrice, float minRise, String expirationDateTime, String userMail) {
+    public Auction(int idAuction, float initialPrice, float minRise, String expirationDateTime, String userMail, ArrayList<Article> articles) {
         this.idAuction = idAuction;
         this.initialPrice = initialPrice;
         this.minRise = minRise;
         this.expirationDateTime = expirationDateTime;
         this.userMail = userMail;
+        this.articles = articles;
     }
 
     public int getIdAuction() {
@@ -57,6 +64,22 @@ public class Auction {
 
     public void setUserMail(String userMail) {
         this.userMail = userMail;
+    }
+
+    public ArrayList<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(ArrayList<Article> articles) {
+        this.articles = articles;
+    }
+
+    public void setIsOpen(boolean isOpen) {
+        this.isOpen = isOpen;
+    }
+
+    public boolean getIsOpen() {
+        return isOpen;
     }
 
 }
