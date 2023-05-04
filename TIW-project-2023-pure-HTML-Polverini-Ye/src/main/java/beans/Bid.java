@@ -1,14 +1,20 @@
 package beans;
 
+import java.sql.Timestamp;
+
 public class Bid {
 
     private int bidId;
     private float bidValue;
-    private String bidDateTime;
+    private Timestamp bidDateTime;
     private String userMail;
     private int idAuction;
+    
+    public Bid() {
+    	
+    }
 
-    public Bid(int bidId, float bidValue, String bidDateTime, String userMail, int idAuction) {
+    public Bid(int bidId, String userMail, float bidValue, Timestamp bidDateTime, int idAuction) {
         this.bidId = bidId;
         this.bidValue = bidValue;
         this.bidDateTime = bidDateTime;
@@ -32,11 +38,11 @@ public class Bid {
         this.bidValue = bidValue;
     }
 
-    public String getBidDateTime() {
+    public Timestamp getBidDateTime() {
         return bidDateTime;
     }
 
-    public void setBidDateTime(String bidDateTime) {
+    public void setBidDateTime(Timestamp bidDateTime) {
         this.bidDateTime = bidDateTime;
     }
 

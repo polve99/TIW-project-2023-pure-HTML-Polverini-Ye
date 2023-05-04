@@ -53,7 +53,7 @@ public class UserDAO {
     }
 
     public User checkAuthentication(String mail, String password) throws SQLException{
-        User user = null;
+        //User user = null;
         String query = "SELECT * FROM user WHERE mail = ? AND password = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
@@ -108,7 +108,7 @@ public class UserDAO {
             pStatement.setString(3 , name);
             pStatement.setString(4 , surname);
             pStatement.setDate(5 , (java.sql.Date) birth_date);
-            pStatement.setDate(6 , java.sql.Date.valueOf(LocalDate.now())); //TODO RICORDARE DI VERIFICARE SE FUNZIONE
+            pStatement.setDate(6 , /*java.sql.Date.valueOf(LocalDate.now()*/(java.sql.Date) new Date(System.currentTimeMillis())); //TODO RICORDARE DI VERIFICARE SE FUNZIONE
             pStatement.setString(7 , telephone);
             pStatement.setString(8 , address);
 
