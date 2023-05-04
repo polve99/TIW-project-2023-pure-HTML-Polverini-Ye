@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.time.LocalDate;
@@ -126,7 +127,7 @@ public class BidDAO {
 			res = pstatement.executeQuery();
 			if (!res.next()) return null;
 			int id = res.getInt("bidId");
-			int value = res.getInt("bidValue");
+			float value = res.getFloat("bidValue");
 			Timestamp creationDateTime = res.getTimestamp("bidDateTime");
 			String userMail = res.getString("userMail");
 			int idAuction = res.getInt("idAuction");
@@ -154,6 +155,41 @@ public class BidDAO {
 	}
 	
 	public List<Bid> orderBidList() throws SQLException {
-		List<Bid> 
+		List<Bid> bids = null;
+		String query = "SELECT * FROM bids ORDER BY bidValue DESC()";
+		PreparedStatement pstatement = null;
+		ResultSet res = null;
+		try {
+			pstatement = connection.prepareStatement(query);
+			res = pstatement.executeQuery();
+			bids = new ArrayList<>();
+			while (res.next()) {
+				int id = res.getInt("bidId");
+				float value = res.getFloat("bidValue");
+				Timestamp creationDateTime = res.getTimestamp("bidDateTime");
+				String userMail = res.getString("userMail");
+				int idAuction = res.getInt("idAuction");
+				bids.add(new Bid(id, userMail, value, creationDateTime, idAuction));
+			}
+
+		} catch (SQLException e) {
+			throw new SQLException(e);
+		} finally {
+			try {
+				if (res != null) {
+					res.close();
+				}
+			} catch (Exception e1) {
+				throw new SQLException(e1);
+			}
+			try {
+				if (pstatement != null) {
+					pstatement.close();
+				}
+			} catch (Exception e2) {
+				throw new SQLException(e2);
+			}
+		}
+		return bids;
 	}
 }
