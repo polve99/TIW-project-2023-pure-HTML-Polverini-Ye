@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title> Home </title>
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../CSS/mystyle.css" th:href="@{/CSS/mystyle.css}" />
+</head>
+
+<body>
+    <h1>BidWars</h1>
+    <h2>Hi <span th:text="${user.name}"></span>, what do you want to do?</h2>
+
+    <br>
+
+    <p><a href="BuyPage.html">BUY SOMETHING<br></a></p>
+    <p><a href="SellPage.html">SELL SOMETHING<br></a></p>
+
+    <div class="logout">
+        <a th:href="@{Logout}">Logout</a>
+    </div>
+
+
+</body>
+
+</html>
+
