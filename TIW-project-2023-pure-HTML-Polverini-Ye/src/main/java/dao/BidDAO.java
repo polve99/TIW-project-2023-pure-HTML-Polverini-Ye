@@ -117,20 +117,21 @@ public class BidDAO {
 		return bid;
 	}
 	
-	public Bid findMaxBid() throws SQLException {
+	public Bid findMaxBid(int idAuction) throws SQLException {
 		Bid bid = null;
-		String query = "SELECT * FROM bids WHERE bidValue = {SELECT MAX(bidValue) FROM bids}";
+		String query = "SELECT * FROM bids WHERE idAuction = ? AND bidValue = {SELECT MAX(bidValue) FROM bids WHERE idAuction = ?}";
 		PreparedStatement pstatement = null;
 		ResultSet res = null;
 		try {
 			pstatement = connection.prepareStatement(query);
+			pstatement.setInt(1, idAuction);
+			pstatement.setInt(2, idAuction);
 			res = pstatement.executeQuery();
 			if (!res.next()) return null;
 			int id = res.getInt("bidId");
 			float value = res.getFloat("bidValue");
 			Timestamp creationDateTime = res.getTimestamp("bidDateTime");
 			String userMail = res.getString("userMail");
-			int idAuction = res.getInt("idAuction");
 			bid = new Bid(id, userMail, value, creationDateTime, idAuction);
 		} catch (SQLException e) {
 			throw new SQLException(e);
