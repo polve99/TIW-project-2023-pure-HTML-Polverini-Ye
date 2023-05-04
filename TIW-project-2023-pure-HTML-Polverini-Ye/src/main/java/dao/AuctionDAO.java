@@ -2,6 +2,8 @@ package dao;
 
 import beans.Article;
 import beans.Auction;
+import beans.Bid;
+import beans.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -78,14 +80,31 @@ public class AuctionDAO {
 
     }
 
-    //TODO non so se va qui? c'entra con il DB o andrebbe nel controller? perché per ora ho messo attributo isClosed in Auction
     public boolean closeAuction(int idAuction) throws SQLException {
-        String query = "UPDATE Auction SET closed = 1 WHERE idAuction = ?";
+        BidDAO bidDAO = new BidDAO(connection);
+        Bid bid = bidDAO.findMaxBid(idAuction); //nella tabella bid cerchi la più alta
+
+        float finalPrice = bid.getBidValue();
+        String winnerMail = bid.getUserMail();
+
+        UserDAO userDAO = new UserDAO(connection);
+        User winner = userDAO.findUser(winnerMail);
+        String shippingAddress = winner.getAddress(); //nella tabella user
+
+        //SELECT
+        //FROM BID
+        //WHERE idAuction = idAuction
+
+
+        String query = "UPDATE Auction SET winnerMail = ? AND finalPrice = ? AND shippingAddress = ? WHERE idAuction = ?";
         PreparedStatement pStatement = null;
 
         try {
             pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, idAuction);
+            pStatement.setString(1, winnerMail);
+            pStatement.setFloat(2, finalPrice);
+            pStatement.setString(3, shippingAddress);
+            pStatement.setInt(4, idAuction);
             pStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -99,10 +118,10 @@ public class AuctionDAO {
             }
         }
         return true;
+
     }
 
-    public boolean findAuctionByIdAuction(int idAuction) throws SQLException {
-        boolean found = false;
+    public Auction findAuctionByIdAuction(int idAuction) throws SQLException {
         String query = "SELECT * FROM Auction WHERE idAuction = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
@@ -112,7 +131,18 @@ public class AuctionDAO {
             pStatement.setInt(1, idAuction);
             resultSet = pStatement.executeQuery();
 
-            if (resultSet.next()) found = true;
+            if (resultSet.next()){
+                Auction auction = new Auction();
+                auction.setIdAuction(resultSet.getInt("idAuction"));
+                auction.setInitialPrice(resultSet.getFloat("initialPrice"));
+                auction.setMinRise(resultSet.getFloat("minRise"));
+                auction.setExpirationDateTime(resultSet.getString("expirationDateTime"));
+                auction.setUserMail(resultSet.getString("userMail"));
+                auction.setWinnerMail(resultSet.getString("winnerMail"));
+                auction.setFinalPrice(resultSet.getFloat("finalPrice"));
+                auction.setShippingAddress(resultSet.getString("shippingAddress"));
+                return auction;
+            }
         } catch (SQLException e) {
             throw new SQLException(e);
         } finally {
@@ -131,11 +161,10 @@ public class AuctionDAO {
                 throw new SQLException(e2);
             }
         }
-        return found;
+        return null;
     }
 
-    public boolean findAuctionByMail(String userMail) throws SQLException {
-        boolean found = false;
+    public Auction findAuctionByMail(String userMail) throws SQLException {
         String query = "SELECT * FROM Auction WHERE userMail = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
@@ -145,7 +174,18 @@ public class AuctionDAO {
             pStatement.setString(1, userMail);
             resultSet = pStatement.executeQuery();
 
-            if (resultSet.next()) found = true;
+            if (resultSet.next()){
+                Auction auction = new Auction();
+                auction.setIdAuction(resultSet.getInt("idAuction"));
+                auction.setInitialPrice(resultSet.getFloat("initialPrice"));
+                auction.setMinRise(resultSet.getFloat("minRise"));
+                auction.setExpirationDateTime(resultSet.getString("expirationDateTime"));
+                auction.setUserMail(resultSet.getString("userMail"));
+                auction.setWinnerMail(resultSet.getString("winnerMail"));
+                auction.setFinalPrice(resultSet.getFloat("finalPrice"));
+                auction.setShippingAddress(resultSet.getString("shippingAddress"));
+                return auction;
+            };
         } catch (SQLException e) {
             throw new SQLException(e);
         } finally {
@@ -164,10 +204,10 @@ public class AuctionDAO {
                 throw new SQLException(e2);
             }
         }
-        return found;
+        return null;
     }
 
-    public boolean findAuctionBySearchInNameAndDescription(String word) throws SQLException {
+    public ArrayList<Auction> findAuctionBySearchInNameAndDescription(String word) throws SQLException {
         boolean found = false;
         //faccio la ricerca sulla tabella Article
         String query = "SELECT * FROM Article WHERE articleName LIKE ? OR articleDescription LIKE ?";
@@ -202,5 +242,5 @@ public class AuctionDAO {
         return found;
     }
 
-}
 
+}

@@ -1,6 +1,5 @@
 package dao;
 
-
 import beans.User;
 
 import java.sql.Connection;
@@ -18,9 +17,8 @@ public class UserDAO {
         this.connection = connection;
     }
 
-    public boolean findUser(String mail) throws SQLException{
-        boolean found = false;
-        String query = "SELECT mail FROM users WHERE mail = ?";
+    public User findUser(String mail) throws SQLException{
+        String query = "SELECT * FROM users WHERE mail = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
@@ -30,7 +28,11 @@ public class UserDAO {
 
             resultSet = pStatement.executeQuery();
 
-            if(resultSet.next()) found = true;
+            if(resultSet.next()){
+                User user = new User();
+                user.setMail(resultSet.getString("mail"));
+                return user;
+            }
         }catch(SQLException e) {
             throw new SQLException(e);
         }finally {
@@ -49,11 +51,46 @@ public class UserDAO {
                 throw new SQLException(e2);
             }
         }
-        return found;
+        return null;
+    }
+
+    public boolean isUserPresent(String mail) throws SQLException{
+        String query = "SELECT * FROM users WHERE mail = ?";
+        ResultSet resultSet = null;
+        PreparedStatement pStatement = null;
+
+        try {
+            pStatement = connection.prepareStatement(query);
+            pStatement.setString(1 , mail);
+
+            resultSet = pStatement.executeQuery();
+
+            if(resultSet.next()){
+                return true;
+            }
+        }catch(SQLException e) {
+            throw new SQLException(e);
+        }finally {
+            try {
+                if(resultSet != null) {
+                    resultSet.close();
+                }
+            }catch(Exception e1) {
+                throw new SQLException(e1);
+            }
+            try {
+                if(pStatement != null) {
+                    pStatement.close();
+                }
+            }catch(Exception e2) {
+                throw new SQLException(e2);
+            }
+        }
+        return false;
     }
 
     public User checkAuthentication(String mail, String password) throws SQLException{
-        //User user = null;
+        User user = null;
         String query = "SELECT * FROM user WHERE mail = ? AND password = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
@@ -94,8 +131,8 @@ public class UserDAO {
 
     public boolean addUser(String mail, String password, String name, String surname, Date birth_date, String telephone, String address) throws SQLException{
         int addedRows = 0;
-      
-        if(findUser(mail))
+
+        if(isUserPresent(mail))
             return false;
 
         String query = "INSERT into user (mail,Password,name,surname,birth_date,subscription_date,telephone,address) VALUES(?,?,?,?,?,?,?,?)";
@@ -108,7 +145,7 @@ public class UserDAO {
             pStatement.setString(3 , name);
             pStatement.setString(4 , surname);
             pStatement.setDate(5 , (java.sql.Date) birth_date);
-            pStatement.setDate(6 , /*java.sql.Date.valueOf(LocalDate.now()*/(java.sql.Date) new Date(System.currentTimeMillis())); //TODO RICORDARE DI VERIFICARE SE FUNZIONE
+            pStatement.setDate(6 , java.sql.Date.valueOf(LocalDate.now())); //TODO RICORDARE DI VERIFICARE SE FUNZIONE
             pStatement.setString(7 , telephone);
             pStatement.setString(8 , address);
 
