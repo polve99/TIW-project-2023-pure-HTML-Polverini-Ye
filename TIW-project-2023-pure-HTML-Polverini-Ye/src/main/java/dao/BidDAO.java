@@ -17,7 +17,6 @@ public class BidDAO {
         this.connection = connection;
     }
 
-    //ho cambiato questa query perché non gli davi un idBid
     public void createBid(int idBid, float bidValue, Timestamp bidDateTime, String userMail, int idAuction) throws SQLException {
         String query = "INSERT INTO bids (idBid, bidValue, bidDateTime, userMail, idAuction) VALUES (?,?,?,?,?)";
         PreparedStatement pstatement = null;

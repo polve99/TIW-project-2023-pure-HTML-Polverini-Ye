@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.time.LocalDate;
 
 public class UserDAO {
 
@@ -17,99 +16,107 @@ public class UserDAO {
         this.connection = connection;
     }
 
-    public User findUser(String mail) throws SQLException{
-        String query = "SELECT * FROM users WHERE mail = ?";
-        ResultSet resultSet = null;
+    public boolean createUser(String userMail, String password, String name, String surname, Date subscription_date, String telephone, String address) throws SQLException {
+        int rows = 0;
+        String query = "INSERT INTO user (usermail, password, name, surname, subscription_date, telephone, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pStatement = null;
 
         try {
             pStatement = connection.prepareStatement(query);
-            pStatement.setString(1 , mail);
-
-            resultSet = pStatement.executeQuery();
-
-            if(resultSet.next()){
-                User user = new User();
-                user.setMail(resultSet.getString("mail"));
-                return user;
-            }
-        }catch(SQLException e) {
+            pStatement.setString(1, userMail);
+            pStatement.setString(2, password);
+            pStatement.setString(3, name);
+            pStatement.setString(4, surname);
+            pStatement.setDate(5, (java.sql.Date) subscription_date);
+            pStatement.setString(6, telephone);
+            pStatement.setString(7, address);
+            rows = pStatement.executeUpdate();
+        } catch (SQLException e) {
             throw new SQLException(e);
-        }finally {
+        } finally {
             try {
-                if(resultSet != null) {
-                    resultSet.close();
-                }
-            }catch(Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if(pStatement != null) {
+                if (pStatement != null) {
                     pStatement.close();
                 }
-            }catch(Exception e2) {
-                throw new SQLException(e2);
+            } catch (Exception e1) {
+                throw new SQLException(e1);
             }
         }
-        return null;
+        return (rows > 0);
     }
 
-    public boolean isUserPresent(String mail) throws SQLException{
-        String query = "SELECT * FROM users WHERE mail = ?";
-        ResultSet resultSet = null;
+    public boolean updateUser(User user) throws SQLException {
+        String query = "UPDATE users SET password = ?, name = ?, surname = ?, telephone = ?, address = ? WHERE mail = ?";
         PreparedStatement pStatement = null;
 
         try {
             pStatement = connection.prepareStatement(query);
-            pStatement.setString(1 , mail);
-
-            resultSet = pStatement.executeQuery();
-
-            if(resultSet.next()){
-                return true;
-            }
-        }catch(SQLException e) {
+            pStatement.setString(1, user.getPassword());
+            pStatement.setString(2, user.getName());
+            pStatement.setString(3, user.getSurname());
+            pStatement.setString(4, user.getTelephone());
+            pStatement.setString(5, user.getAddress());
+            pStatement.setString(6, user.getUserMail());
+            pStatement.executeUpdate();
+        } catch (SQLException e) {
             throw new SQLException(e);
-        }finally {
+        } finally {
             try {
-                if(resultSet != null) {
-                    resultSet.close();
-                }
-            }catch(Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if(pStatement != null) {
+                if (pStatement != null) {
                     pStatement.close();
                 }
-            }catch(Exception e2) {
+            } catch (Exception e2) {
                 throw new SQLException(e2);
             }
         }
-        return false;
+        return true;
     }
 
-    public User checkAuthentication(String mail, String password) throws SQLException{
+    public boolean deleteUser(String mail) throws SQLException {
+        String query = "DELETE FROM users WHERE mail = ?";
+        PreparedStatement pStatement = null;
+
+        try {
+            pStatement = connection.prepareStatement(query);
+            pStatement.setString(1, mail);
+            pStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            try {
+                if (pStatement != null) {
+                    pStatement.close();
+                }
+            } catch (Exception e2) {
+                throw new SQLException(e2);
+            }
+        }
+        return true;
+    }
+
+    public User findUserByUserMail(String userMail) throws SQLException{
         User user = null;
-        String query = "SELECT * FROM user WHERE mail = ? AND password = ?";
+        String query = "SELECT * FROM users WHERE userMail = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
         try{
             pStatement = connection.prepareStatement(query);
-            pStatement.setString(1 , mail);
-            pStatement.setString(2 , password);
-
+            pStatement.setString(1, userMail);
             resultSet = pStatement.executeQuery();
 
-            if (resultSet.next()) {
-                return new User(resultSet.getString("Mail"), resultSet.getString("Password"),
-                        resultSet.getString("Name"), resultSet.getString("Surname"),
-                        resultSet.getDate("Birth_date"), resultSet.getDate("Subscription_date"),
-                        resultSet.getString("Telephone"), resultSet.getString("Address"));
+            if(resultSet.next()){
+                user = new User();
+                user.setUserMail(resultSet.getString("userMail"));
+                user.setPassword(resultSet.getString("password"));
+                user.setName(resultSet.getString("name"));
+                user.setSurname(resultSet.getString("surname"));
+                user.setSubscription_date(resultSet.getDate("subscription_date"));
+                user.setTelephone(resultSet.getString("telephone"));
+                user.setAddress(resultSet.getString("address"));
             }
         } catch (SQLException e) {
-            throw new SQLException();
+            throw new SQLException(e);
         } finally {
             try {
                 if(resultSet != null) {
@@ -126,42 +133,84 @@ public class UserDAO {
                 throw new SQLException(e2);
             }
         }
-        return null;
+        return user;
     }
 
-    public boolean addUser(String mail, String password, String name, String surname, Date birth_date, String telephone, String address) throws SQLException{
-        int addedRows = 0;
-
-        if(isUserPresent(mail))
-            return false;
-
-        String query = "INSERT into user (mail,Password,name,surname,birth_date,subscription_date,telephone,address) VALUES(?,?,?,?,?,?,?,?)";
+    public User getUserAfterAuthentication(String userMail, String password) throws SQLException{
+        User user = null;
+        String query = "SELECT * FROM users WHERE userMail = ? AND password = ?";
+        ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
-        try {
+        try{
             pStatement = connection.prepareStatement(query);
-            pStatement.setString(1 , mail);
-            pStatement.setString(2 , password);
-            pStatement.setString(3 , name);
-            pStatement.setString(4 , surname);
-            pStatement.setDate(5 , (java.sql.Date) birth_date);
-            pStatement.setDate(6 , java.sql.Date.valueOf(LocalDate.now())); //TODO RICORDARE DI VERIFICARE SE FUNZIONE
-            pStatement.setString(7 , telephone);
-            pStatement.setString(8 , address);
+            pStatement.setString(1, userMail);
+            pStatement.setString(2, password);
+            resultSet = pStatement.executeQuery();
 
-            addedRows = pStatement.executeUpdate();//code is the number of updated row in the DB
-        }catch(SQLException e) {
+            if(resultSet.next()){
+                user = new User();
+                user.setUserMail(resultSet.getString("userMail"));
+                user.setPassword(resultSet.getString("password"));
+                user.setName(resultSet.getString("name"));
+                user.setSurname(resultSet.getString("surname"));
+                user.setSubscription_date(resultSet.getDate("subscription_date"));
+                user.setTelephone(resultSet.getString("telephone"));
+                user.setAddress(resultSet.getString("address"));
+            }
+        } catch (SQLException e) {
             throw new SQLException(e);
-        }finally {
+        } finally {
             try {
-                if (pStatement != null) {
-                    pStatement.close();
+                if(resultSet != null) {
+                    resultSet.close();
                 }
             } catch (Exception e1) {
                 throw new SQLException(e1);
             }
+            try {
+                if(pStatement != null) {
+                    pStatement.close();
+                }
+            } catch (Exception e2) {
+                throw new SQLException(e2);
+            }
         }
-        return (addedRows > 0);
+        return user;
+    }
+
+    private boolean isUserMailInDB(String userMail) throws SQLException{
+        String query = "SELECT * FROM users WHERE userMail = ?";
+        ResultSet resultSet = null;
+        PreparedStatement pStatement = null;
+
+        try{
+            pStatement = connection.prepareStatement(query);
+            pStatement.setString(1, userMail);
+            resultSet = pStatement.executeQuery();
+
+            if(resultSet.next()){
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            try {
+                if(resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception e1) {
+                throw new SQLException(e1);
+            }
+            try {
+                if(pStatement != null) {
+                    pStatement.close();
+                }
+            } catch (Exception e2) {
+                throw new SQLException(e2);
+            }
+        }
+        return false;
     }
 
 }

@@ -18,33 +18,33 @@ public class ArticleDAO {
         this.connection = connection;
     }
 
-    public boolean createArticleWithoutImage(Article article) throws SQLException {
+    //TODO: da sostituire poi con createArticle quando ho capito come funzionano le image_path
+    public boolean createArticle2(int articleCode, String articleName, String articleDescription, String image, float articlePrice, int idAuction) throws SQLException{
         String query = "INSERT INTO articles (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement pStatement = null;
 
-        try {
+        try{
             pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, article.getArticleCode());
-            pStatement.setString(2, article.getArticleName());
-            pStatement.setString(3, article.getArticleDescription());
-            pStatement.setString(4, article.getImage());
-            pStatement.setFloat(5, article.getArticlePrice());
-            pStatement.setInt(6, article.getIdAuction());
+            pStatement.setInt(1, articleCode);
+            pStatement.setString(2, articleName);
+            pStatement.setString(3, articleDescription);
+            pStatement.setString(4, image);
+            pStatement.setFloat(5, articlePrice);
+            pStatement.setInt(6, idAuction);
             pStatement.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException e){
             throw new SQLException(e);
         } finally {
-            try {
-                if (pStatement != null) {
+            try{
+                if(pStatement != null){
                     pStatement.close();
                 }
-            } catch (Exception e2) {
+            } catch (Exception e2){
                 throw new SQLException(e2);
             }
         }
         return true;
     }
-
     //TODO: gestione immagini -> per ora nella createArticle ho impostato image come un path, è da vedere come impostare FileUtils*/
     public void createArticle(Article article) throws SQLException, IOException {
         // caricamento dell'immagine dal file system

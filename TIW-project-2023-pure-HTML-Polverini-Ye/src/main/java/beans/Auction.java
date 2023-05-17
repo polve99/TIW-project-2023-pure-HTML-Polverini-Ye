@@ -9,9 +9,9 @@ public class Auction {
     private float minRise;
     private String expirationDateTime;
     private String userMail;
+    private boolean isOpen;
 
     private ArrayList<Article> articles;
-    private boolean isOpen;
 
     public Auction() {
     }
@@ -23,7 +23,7 @@ public class Auction {
         this.expirationDateTime = expirationDateTime;
         this.userMail = userMail;
 
-        this.articles = new ArrayList<Article>();
+        this.articles = new ArrayList<>();
         this.isOpen = true;
     }
 
