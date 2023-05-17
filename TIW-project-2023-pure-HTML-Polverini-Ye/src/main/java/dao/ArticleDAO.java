@@ -19,7 +19,7 @@ public class ArticleDAO {
     }
 
     public boolean createArticleWithoutImage(Article article) throws SQLException {
-        String query = "INSERT INTO Article (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO articles (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement pStatement = null;
 
         try {
@@ -45,7 +45,6 @@ public class ArticleDAO {
         return true;
     }
 
-
     //TODO: gestione immagini -> per ora nella createArticle ho impostato image come un path, è da vedere come impostare FileUtils*/
     public void createArticle(Article article) throws SQLException, IOException {
         // caricamento dell'immagine dal file system
@@ -55,6 +54,7 @@ public class ArticleDAO {
         String fileName = imageFile.getName();
         String newFilePath = "path/to/image/folder/" + fileName;
         File newImageFile = new File(newFilePath);
+
         //TODO: rimettere dopo aver impostato il pom.xml correttamente
         //FileUtils.copyFile(imageFile, newImageFile);
 
@@ -88,7 +88,7 @@ public class ArticleDAO {
     }
 
     public boolean deleteArticle(int articleCode) throws SQLException {
-        String query = "DELETE FROM Article WHERE articleCode = ?";
+        String query = "DELETE FROM articles WHERE articleCode = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -110,7 +110,7 @@ public class ArticleDAO {
     }
 
     public boolean updateArticle(Article article) throws SQLException {
-        String query = "UPDATE Article SET articleName = ?, articleDescription = ?, image = ?, articlePrice = ?, idAuction = ? WHERE articleCode = ?";
+        String query = "UPDATE articles SET articleName = ?, articleDescription = ?, image = ?, articlePrice = ?, idAuction = ? WHERE articleCode = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -136,80 +136,9 @@ public class ArticleDAO {
         return true;
     }
 
-    public boolean findArticleByArticleCode(int articleCode) throws SQLException {
-        boolean found = false;
-        String query = "SELECT * FROM Article WHERE articleCode = ?";
-        ResultSet resultSet = null;
-        PreparedStatement pStatement = null;
-
-        try {
-            pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, articleCode);
-            resultSet = pStatement.executeQuery();
-
-            if (resultSet.next()) found = true;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-            } catch (Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if (pStatement != null) {
-                    pStatement.close();
-                }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-        return found;
-    }
-
-    public boolean findArticleByIdAuction(int articleCode, int idAuction) throws SQLException {
-        boolean found = false;
-        String query = "SELECT * FROM Article WHERE articleCode = ? AND idAuction = ?";
-        ResultSet resultSet = null;
-        PreparedStatement pStatement = null;
-
-        try {
-            pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, articleCode);
-            pStatement.setInt(2, idAuction);
-            resultSet = pStatement.executeQuery();
-
-            if (resultSet.next()) found = true;
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-            } catch (Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if (pStatement != null) {
-                    pStatement.close();
-                }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-        return found;
-    }
-
-
-
-    //TODO: non so se vanno nei DAO perchè nei DAO dovrebbero esserci solo le query però se ho bisogno che restituisca un oggetto servono per forza
-
-    public Article findArticleObjByArticleCode(int articleCode, int idAuction) throws SQLException {
+    public Article findArticleByArticleCode(int articleCode, int idAuction) throws SQLException {
         Article article = null;
-        String query = "SELECT * FROM Article WHERE articleCode = ?";
+        String query = "SELECT * FROM articles WHERE articleCode = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
@@ -248,100 +177,15 @@ public class ArticleDAO {
         return article;
     }
 
-    public Article findArticleObjByArticleCodeAndIdAuction(int articleCode, int idAuction) throws SQLException {
-        Article article = null;
-        String query = "SELECT * FROM Article WHERE articleCode = ? AND idAuction = ?";
-        ResultSet resultSet = null;
-        PreparedStatement pStatement = null;
-
-        try {
-            pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, articleCode);
-            pStatement.setInt(2, idAuction);
-            resultSet = pStatement.executeQuery();
-
-            if (resultSet.next()) {
-                article = new Article();
-                article.setArticleCode(resultSet.getInt("articleCode"));
-                article.setArticleName(resultSet.getString("articleName"));
-                article.setArticleDescription(resultSet.getString("articleDescription"));
-                article.setImage(resultSet.getString("image"));
-                article.setArticlePrice(resultSet.getFloat("articlePrice"));
-                article.setIdAuction(resultSet.getInt("idAuction"));
-            }
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-            } catch (Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if (pStatement != null) {
-                    pStatement.close();
-                }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-        return article;
-    }
-
-    public ArrayList<Article> findArticlesListByAuctionId(int idAuction) throws SQLException {
+    public ArrayList<Article> findArticlesListByIdAuction(int idAuction) throws SQLException {
         ArrayList<Article> articles = new ArrayList<Article>();
-        String query = "SELECT * FROM Article WHERE idAuction = ?";
+        String query = "SELECT * FROM articles WHERE idAuction = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
         try {
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, idAuction);
-            resultSet = pStatement.executeQuery();
-
-            while (resultSet.next()) {
-                Article article = new Article();
-                article.setArticleCode(resultSet.getInt("articleCode"));
-                article.setArticleName(resultSet.getString("articleName"));
-                article.setArticleDescription(resultSet.getString("articleDescription"));
-                article.setImage(resultSet.getString("image"));
-                article.setArticlePrice(resultSet.getFloat("articlePrice"));
-                article.setIdAuction(resultSet.getInt("idAuction"));
-                articles.add(article);
-            }
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-            } catch (Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if (pStatement != null) {
-                    pStatement.close();
-                }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-        return articles;
-    }
-
-    public ArrayList<Article> findArticlesListByAuctionIdAndArticleCode(int idAuction, int articleCode) throws SQLException {
-        ArrayList<Article> articles = new ArrayList<Article>();
-        String query = "SELECT * FROM Article WHERE idAuction = ? AND articleCode = ?";
-        ResultSet resultSet = null;
-        PreparedStatement pStatement = null;
-
-        try {
-            pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, idAuction);
-            pStatement.setInt(2, articleCode);
             resultSet = pStatement.executeQuery();
 
             while (resultSet.next()) {
