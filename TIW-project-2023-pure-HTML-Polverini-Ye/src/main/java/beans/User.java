@@ -4,11 +4,10 @@ import java.util.Date;
 
 public class User {
 
-    private String mail;
+    private String userMail;
     private String password;
     private String name;
     private String surname;
-    private Date birth_date;
     private Date subscription_date;
     private String telephone;
     private String address;
@@ -16,29 +15,26 @@ public class User {
     public User() {
     }
 
-    public User(String mail, String password, String name, String surname, Date birth_date, Date subscription_date, String telephone, String address) {
-        this.mail = mail;
+    public User(String userMail, String password, String name, String surname, Date subscription_date, String telephone, String address) {
+        this.userMail = userMail;
         this.password = password;
         this.name = name;
         this.surname = surname;
-        this.birth_date = birth_date;
         this.subscription_date = subscription_date;
         this.telephone = telephone;
         this.address = address;
     }
 
-    public String getMail() {
-        return mail;
+    public String getUserMail() {
+        return userMail;
     }
-
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setUserMail(String userMail) {
+        this.userMail = userMail;
     }
 
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -46,7 +42,6 @@ public class User {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -54,23 +49,13 @@ public class User {
     public String getSurname() {
         return surname;
     }
-
     public void setSurname(String surname) {
         this.surname = surname;
-    }
-
-    public Date getBirth_date() {
-        return birth_date;
-    }
-
-    public void setBirth_date(Date birth_date) {
-        this.birth_date = birth_date;
     }
 
     public Date getSubscription_date() {
         return subscription_date;
     }
-
     public void setSubscription_date(Date subscription_date) {
         this.subscription_date = subscription_date;
     }
@@ -78,7 +63,6 @@ public class User {
     public String getTelephone() {
         return telephone;
     }
-
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
@@ -86,7 +70,6 @@ public class User {
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }

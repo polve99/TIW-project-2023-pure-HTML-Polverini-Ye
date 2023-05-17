@@ -4,37 +4,33 @@ import java.sql.Timestamp;
 
 public class Bid {
 
-    private int bidId;
+    private int idBid;
     private float bidValue;
     private Timestamp bidDateTime;
     private String userMail;
     private int idAuction;
-    
+
     public Bid() {
-    	
     }
 
-    public Bid(int bidId, String userMail, float bidValue, Timestamp bidDateTime, int idAuction) {
-
-        this.bidId = bidId;
+    public Bid(int idBid, String userMail, float bidValue, Timestamp bidDateTime, int idAuction) {
+        this.idBid = idBid;
         this.bidValue = bidValue;
         this.bidDateTime = bidDateTime;
         this.userMail = userMail;
         this.idAuction = idAuction;
     }
 
-    public int getBidId() {
-        return bidId;
+    public int getIdBid() {
+        return idBid;
     }
-
-    public void setBidId(int bidId) {
-        this.bidId = bidId;
+    public void setIdBid(int idBid) {
+        this.idBid = idBid;
     }
 
     public float getBidValue() {
         return bidValue;
     }
-
     public void setBidValue(float bidValue) {
         this.bidValue = bidValue;
     }
@@ -42,7 +38,6 @@ public class Bid {
     public Timestamp getBidDateTime() {
         return bidDateTime;
     }
-
     public void setBidDateTime(Timestamp bidDateTime) {
         this.bidDateTime = bidDateTime;
     }
@@ -50,7 +45,6 @@ public class Bid {
     public String getUserMail() {
         return userMail;
     }
-
     public void setUserMail(String userMail) {
         this.userMail = userMail;
     }
@@ -58,7 +52,6 @@ public class Bid {
     public int getIdAuction() {
         return idAuction;
     }
-
     public void setIdAuction(int idAuction) {
         this.idAuction = idAuction;
     }

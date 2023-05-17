@@ -11,25 +11,25 @@ public class Auction {
     private String userMail;
 
     private ArrayList<Article> articles;
-
-    private boolean isOpen = true;
+    private boolean isOpen;
 
     public Auction() {
     }
 
-    public Auction(int idAuction, float initialPrice, float minRise, String expirationDateTime, String userMail, ArrayList<Article> articles) {
+    public Auction(int idAuction, float initialPrice, float minRise, String expirationDateTime, String userMail) {
         this.idAuction = idAuction;
         this.initialPrice = initialPrice;
         this.minRise = minRise;
         this.expirationDateTime = expirationDateTime;
         this.userMail = userMail;
-        this.articles = articles;
+
+        this.articles = new ArrayList<Article>();
+        this.isOpen = true;
     }
 
     public int getIdAuction() {
         return idAuction;
     }
-
     public void setIdAuction(int idAuction) {
         this.idAuction = idAuction;
     }
@@ -37,7 +37,6 @@ public class Auction {
     public float getInitialPrice() {
         return initialPrice;
     }
-
     public void setInitialPrice(float initialPrice) {
         this.initialPrice = initialPrice;
     }
@@ -45,7 +44,6 @@ public class Auction {
     public float getMinRise() {
         return minRise;
     }
-
     public void setMinRise(float minRise) {
         this.minRise = minRise;
     }
@@ -53,7 +51,6 @@ public class Auction {
     public String getExpirationDateTime() {
         return expirationDateTime;
     }
-
     public void setExpirationDateTime(String expirationDateTime) {
         this.expirationDateTime = expirationDateTime;
     }
@@ -61,7 +58,6 @@ public class Auction {
     public String getUserMail() {
         return userMail;
     }
-
     public void setUserMail(String userMail) {
         this.userMail = userMail;
     }
@@ -69,17 +65,15 @@ public class Auction {
     public ArrayList<Article> getArticles() {
         return articles;
     }
-
     public void setArticles(ArrayList<Article> articles) {
         this.articles = articles;
     }
 
-    public void setIsOpen(boolean isOpen) {
-        this.isOpen = isOpen;
-    }
-
-    public boolean getIsOpen() {
+    public boolean isOpen() {
         return isOpen;
+    }
+    public void setOpen(boolean isOpen) {
+        this.isOpen = isOpen;
     }
 
 }

@@ -25,7 +25,6 @@ public class Article {
     public int getArticleCode() {
         return articleCode;
     }
-
     public void setArticleCode(int articleCode) {
         this.articleCode = articleCode;
     }
@@ -33,7 +32,6 @@ public class Article {
     public String getArticleName() {
         return articleName;
     }
-
     public void setArticleName(String articleName) {
         this.articleName = articleName;
     }
@@ -41,7 +39,6 @@ public class Article {
     public String getArticleDescription() {
         return articleDescription;
     }
-
     public void setArticleDescription(String articleDescription) {
         this.articleDescription = articleDescription;
     }
@@ -49,7 +46,6 @@ public class Article {
     public String getImage() {
         return image;
     }
-
     public void setImage(String image) {
         this.image = image;
     }
@@ -57,7 +53,6 @@ public class Article {
     public float getArticlePrice() {
         return articlePrice;
     }
-
     public void setArticlePrice(float articlePrice) {
         this.articlePrice = articlePrice;
     }
@@ -65,7 +60,6 @@ public class Article {
     public int getIdAuction() {
         return idAuction;
     }
-
     public void setIdAuction(int idAuction) {
         this.idAuction = idAuction;
     }
