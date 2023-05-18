@@ -20,7 +20,7 @@
 				<form action = "Login" method = "post" >	
 					<fieldset>				
 						<p><label>E-mail</label>
-						<input type = "text" name = "email" required></p>
+						<input type = "text" name = "userMail" required></p>
 						<p><label>Password</label>
 						<input type = "password" name = "password" required></p>
 						<input type = "submit" value = "Login">
@@ -31,7 +31,7 @@
 						
 						<p class = "changeAutMethodInfo">
 							Don't have an account? 
-							<a id = "registerAnchor" href = "Registration.html">Register</a>
+							<a id = "registerAnchor" href = "Registration.html" th:href="@{/Registration}">Register</a>
 						</p>	
 					</div>
 				

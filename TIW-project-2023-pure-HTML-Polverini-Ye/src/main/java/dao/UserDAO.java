@@ -137,7 +137,7 @@ public class UserDAO {
 
     public User getUserAfterAuthentication(String userMail, String password) throws SQLException{
         User user = null;
-        String query = "SELECT * FROM users WHERE userMail = ? AND password = ?";
+        String query = "SELECT * FROM dbaste.users WHERE userMail = ? AND password = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 

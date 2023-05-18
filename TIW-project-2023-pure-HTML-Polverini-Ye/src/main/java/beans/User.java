@@ -1,6 +1,8 @@
 package beans;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class User {
 
@@ -11,8 +13,10 @@ public class User {
     private Date subscription_date;
     private String telephone;
     private String address;
+    private List<String> navigationHistory = new ArrayList<>();
 
     public User() {
+    	super();
     }
 
     public User(String userMail, String password, String name, String surname, Date subscription_date, String telephone, String address) {
@@ -73,5 +77,20 @@ public class User {
     public void setAddress(String address) {
         this.address = address;
     }
+    public List<String> getNavigationHistory() {
+		return navigationHistory;
+	}
+
+	public void setNavigationHistory(List<String> navigationHistory) {
+		this.navigationHistory = navigationHistory;
+	}
+	
+	public String getLastPage() {
+		return this.navigationHistory.get(this.navigationHistory.size() - 1);
+	}
+	
+	public void addNewPage(String url) {
+		this.navigationHistory.add(url);
+	}
 
 }
