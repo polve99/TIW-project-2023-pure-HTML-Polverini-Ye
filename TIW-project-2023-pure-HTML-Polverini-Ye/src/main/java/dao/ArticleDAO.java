@@ -3,7 +3,6 @@ package dao;
 import beans.Article;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,13 +13,13 @@ public class ArticleDAO {
 
     private Connection connection;
 
-    public ArticleDAO(Connection connection) throws SQLException {
+    public ArticleDAO(Connection connection) {
         this.connection = connection;
     }
 
     //TODO: da sostituire poi con createArticle quando ho capito come funzionano le image_path
-    public boolean createArticle2(int articleCode, String articleName, String articleDescription, String image, float articlePrice, int idAuction) throws SQLException{
-        String query = "INSERT INTO articles (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
+    public boolean createArticle(int articleCode, String articleName, String articleDescription, String image, float articlePrice, int idAuction) throws SQLException{
+        String query = "INSERT INTO dbaste.articles (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement pStatement = null;
 
         try{
@@ -46,7 +45,7 @@ public class ArticleDAO {
         return true;
     }
     //TODO: gestione immagini -> per ora nella createArticle ho impostato image come un path, è da vedere come impostare FileUtils*/
-    public void createArticle(Article article) throws SQLException, IOException {
+    public void createArticle2(Article article) throws SQLException {
         // caricamento dell'immagine dal file system
         File imageFile = new File(article.getImage());
 
@@ -62,7 +61,7 @@ public class ArticleDAO {
         article.setImage(newFilePath);
 
         // salvataggio dell'articolo nel database
-        String query = "INSERT INTO articles (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO dbaste.articles (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement statement = null;
 
         try {
@@ -88,7 +87,7 @@ public class ArticleDAO {
     }
 
     public boolean deleteArticle(int articleCode) throws SQLException {
-        String query = "DELETE FROM articles WHERE articleCode = ?";
+        String query = "DELETE FROM dbaste.articles WHERE articleCode = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -110,7 +109,7 @@ public class ArticleDAO {
     }
 
     public boolean updateArticle(Article article) throws SQLException {
-        String query = "UPDATE articles SET articleName = ?, articleDescription = ?, image = ?, articlePrice = ?, idAuction = ? WHERE articleCode = ?";
+        String query = "UPDATE dbaste.articles SET articleName = ?, articleDescription = ?, image = ?, articlePrice = ?, idAuction = ? WHERE articleCode = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -136,9 +135,9 @@ public class ArticleDAO {
         return true;
     }
 
-    public Article findArticleByArticleCode(int articleCode, int idAuction) throws SQLException {
+    public Article findArticleByArticleCode(int articleCode) throws SQLException {
         Article article = null;
-        String query = "SELECT * FROM articles WHERE articleCode = ?";
+        String query = "SELECT * FROM dbaste.articles WHERE articleCode = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
@@ -179,7 +178,7 @@ public class ArticleDAO {
 
     public ArrayList<Article> findArticlesListByIdAuction(int idAuction) throws SQLException {
         ArrayList<Article> articles = new ArrayList<Article>();
-        String query = "SELECT * FROM articles WHERE idAuction = ?";
+        String query = "SELECT * FROM dbaste.articles WHERE idAuction = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 

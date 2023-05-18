@@ -17,8 +17,8 @@ public class UserDAO {
 
     public boolean createUser(String userMail, String password, String name, String surname, String telephone, String address) throws SQLException {
         int rows = 0;
-        String query = "INSERT INTO users (usermail, password, name, surname, telephone, address) VALUES (?, ?, ?, ?, ?, ?)";
-        //es su mySQL: INSERT INTO users (usermail, password, name, surname, telephone, address) VALUES ('gy', 'ok', 'giu','ye',null, 'mi');
+        String query = "INSERT INTO dbaste.users (usermail, password, name, surname, telephone, address) VALUES (?, ?, ?, ?, ?, ?)";
+        //es su mySQL: INSERT INTO dbaste.users (usermail, password, name, surname, telephone, address) VALUES ('gy', 'ok', 'giu','ye',null, 'mi');
         PreparedStatement pStatement = null;
 
         try {
@@ -45,7 +45,7 @@ public class UserDAO {
     }
 
     public boolean updateUser(User user) throws SQLException {
-        String query = "UPDATE users SET password = ?, name = ?, surname = ?, telephone = ?, address = ? WHERE mail = ?";
+        String query = "UPDATE dbaste.users SET password = ?, name = ?, surname = ?, telephone = ?, address = ? WHERE mail = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -72,7 +72,7 @@ public class UserDAO {
     }
 
     public boolean deleteUser(String mail) throws SQLException {
-        String query = "DELETE FROM users WHERE mail = ?";
+        String query = "DELETE FROM dbaste.users WHERE mail = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -95,7 +95,7 @@ public class UserDAO {
 
     public User findUserByUserMail(String userMail) throws SQLException{
         User user = null;
-        String query = "SELECT * FROM users WHERE userMail = ?";
+        String query = "SELECT * FROM dbaste.users WHERE userMail = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
@@ -178,8 +178,8 @@ public class UserDAO {
         return user;
     }
 
-    private boolean isUserMailInDB(String userMail) throws SQLException{
-        String query = "SELECT * FROM users WHERE userMail = ?";
+    public boolean isUserMailInDB(String userMail) throws SQLException{
+        String query = "SELECT * FROM dbaste.users WHERE userMail = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 

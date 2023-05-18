@@ -18,7 +18,7 @@ public class BidDAO {
     }
 
     public void createBid(int idBid, float bidValue, Timestamp bidDateTime, String userMail, int idAuction) throws SQLException {
-        String query = "INSERT INTO bids (idBid, bidValue, bidDateTime, userMail, idAuction) VALUES (?,?,?,?,?)";
+        String query = "INSERT INTO dbaste.bids (idBid, bidValue, bidDateTime, userMail, idAuction) VALUES (?,?,?,?,?)";
         PreparedStatement pstatement = null;
         try {
             pstatement = connection.prepareStatement(query);
@@ -43,7 +43,7 @@ public class BidDAO {
 
     public Bid findBidByIdBid(int idBid) throws SQLException{
         Bid bid = new Bid();
-        String query = "SELECT * FROM bids WHERE idBid = ?";
+        String query = "SELECT * FROM dbaste.bids WHERE idBid = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
@@ -80,8 +80,8 @@ public class BidDAO {
     }
 
     public ArrayList<Bid> findBidsListByUserMail(String userMail) throws SQLException {
-        ArrayList<Bid> bids = new ArrayList<>();
-        String query = "SELECT * FROM bids WHERE userMail = ?";
+        ArrayList<Bid> bids = new ArrayList<Bid>();
+        String query = "SELECT * FROM dbaste.bids WHERE userMail = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
@@ -120,8 +120,8 @@ public class BidDAO {
     }
 
     public ArrayList<Bid> findBidsListByIdAuction(int idAuction) throws SQLException{
-        ArrayList<Bid> bids = new ArrayList<>();
-        String query = "SELECT * FROM bids WHERE idAuction = ?";
+        ArrayList<Bid> bids = new ArrayList<Bid>();
+        String query = "SELECT * FROM dbaste.bids WHERE idAuction = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
@@ -161,7 +161,7 @@ public class BidDAO {
 
     public Bid findMaxBidInAuction(int idAuction) throws SQLException {
         Bid bid = new Bid();
-        String query = "SELECT * FROM bids WHERE idAuction = ? AND bidValue = {SELECT MAX(bidValue) FROM bids WHERE idAuction = ?}";
+        String query = "SELECT * FROM dbaste.bids WHERE idAuction = ? AND bidValue = {SELECT MAX(bidValue) FROM bids WHERE idAuction = ?}";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
@@ -199,8 +199,8 @@ public class BidDAO {
     }
 
     public ArrayList<Bid> getBidsListInDescOrder() throws SQLException {
-        ArrayList<Bid> orderedBids = new ArrayList<>();
-        String query = "SELECT * FROM bids ORDER BY bidValue DESC";
+        ArrayList<Bid> orderedBids = new ArrayList<Bid>();
+        String query = "SELECT * FROM dbaste.bids ORDER BY bidValue DESC";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 

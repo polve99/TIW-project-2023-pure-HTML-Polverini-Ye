@@ -22,7 +22,7 @@ public class AuctionDAO {
     public boolean createAuction(int idAuction, float initialPrice, float minRise, String expirationDateTime, String userMail) throws SQLException {
         if (isAuctionInDB(idAuction)) return false;
 
-        String query = "INSERT INTO auctions (idAuction, initialPrice, minRise, expirationDateTime, userMail, isOpen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO dbaste.auctions (idAuction, initialPrice, minRise, expirationDateTime, userMail, isOpen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pStatement = null;
 
         try {
@@ -52,7 +52,7 @@ public class AuctionDAO {
         if(!isAuctionOpen(idAuction)) return false;
 
         //lavoro sulla tabella di article
-        String query = "UPDATE articles SET idAuction = ? WHERE articleCode = ?";
+        String query = "UPDATE dbaste.articles SET idAuction = ? WHERE articleCode = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -85,7 +85,7 @@ public class AuctionDAO {
     }
 
     public Auction findAuctionByIdAuction(int idAuction) throws SQLException {
-        String query = "SELECT * FROM auctions WHERE idAuction = ?";
+        String query = "SELECT * FROM dbaste.auctions WHERE idAuction = ?";
         PreparedStatement pStatement = null;
         Auction auction = null;
 
@@ -118,7 +118,7 @@ public class AuctionDAO {
 
     public ArrayList<Auction> findAuctionsListByUserMail(String userMail) throws SQLException{
         ArrayList<Auction> auctions = new ArrayList<Auction>();
-        String query = "SELECT * FROM auctions WHERE userMail = ?";
+        String query = "SELECT * FROM dbaste.auctions WHERE userMail = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -151,7 +151,7 @@ public class AuctionDAO {
 
     public ArrayList<Auction> findAuctionsListByWordSearch(String word) throws SQLException{
         ArrayList<Auction> auctions = new ArrayList<Auction>();
-        String query = "SELECT * FROM auctions JOIN articles " +
+        String query = "SELECT * FROM dbaste.auctions JOIN articles " +
                 "ON auctions.idAuction = articles.idAuction " +
                 "WHERE articles.name LIKE ? OR articles.description LIKE ?";
         PreparedStatement pStatement = null;
@@ -190,7 +190,7 @@ public class AuctionDAO {
 
         auction.setOpen(false);
 
-        String query = "UPDATE auctions SET open = ? WHERE idAuction = ?";
+        String query = "UPDATE dbaste.auctions SET open = ? WHERE idAuction = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -236,7 +236,7 @@ public class AuctionDAO {
     }
 
     private boolean isAuctionInDB(int idAuction) throws SQLException{
-        String query = "SELECT * FROM auctions WHERE idAuction = ?";
+        String query = "SELECT * FROM dbaste.auctions WHERE idAuction = ?";
         PreparedStatement pStatement = null;
         boolean inDB = false;
 
@@ -263,7 +263,7 @@ public class AuctionDAO {
     }
 
     public boolean isAuctionOpen(int idAuction) throws SQLException{
-        String query = "SELECT isOpen FROM auctions WHERE idAuction = ?";
+        String query = "SELECT isOpen FROM dbaste.auctions WHERE idAuction = ?";
         PreparedStatement pStatement = null;
         boolean open = false;
 
@@ -291,7 +291,7 @@ public class AuctionDAO {
 
     public ArrayList<Auction> getAllOpenAuctions() throws SQLException{
         ArrayList<Auction> auctions = new ArrayList<Auction>();
-        String query = "SELECT * FROM auctions WHERE isOpen = true";
+        String query = "SELECT * FROM dbaste.auctions WHERE isOpen = true";
         PreparedStatement pStatement = null;
 
         try {
@@ -323,7 +323,7 @@ public class AuctionDAO {
 
     public ArrayList<Auction> getALlClosedAuctions() throws SQLException{
         ArrayList<Auction> auctions = new ArrayList<Auction>();
-        String query = "SELECT * FROM auctions WHERE isOpen = false";
+        String query = "SELECT * FROM dbaste.auctions WHERE isOpen = false";
         PreparedStatement pStatement = null;
 
         try {
