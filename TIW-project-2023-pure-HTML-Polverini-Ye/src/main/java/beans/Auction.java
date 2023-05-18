@@ -11,6 +11,7 @@ public class Auction {
     private String userMail;
     private boolean isOpen;
 
+    //ops credo sia da togliere??
     private ArrayList<Article> articles;
 
     public Auction() {
