@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,15 +12,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+
 import beans.User;
 import dao.UserDAO;
 import utilis.ConnectionHandler;
+import utilis.ThymeleafTemplateEngineCreator;
 
 @WebServlet("/Login")
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
-       
+	private TemplateEngine templateEngine = null;   
+	
     public Login() {
         super();
     }
@@ -27,6 +33,14 @@ public class Login extends HttpServlet {
     @Override
     public void init() throws ServletException {
     	connection = ConnectionHandler.getConnection(getServletContext());
+    	ServletContext servletContext = getServletContext();
+    	templateEngine = ThymeleafTemplateEngineCreator.getTemplateEngine(servletContext);
+    }
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	String path = "WEB-INF/index.html";
+		final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
+		templateEngine.process(path, ctx, response.getWriter());
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
