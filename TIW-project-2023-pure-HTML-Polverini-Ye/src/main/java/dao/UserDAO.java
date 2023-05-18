@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 public class UserDAO {
 
@@ -16,9 +15,10 @@ public class UserDAO {
         this.connection = connection;
     }
 
-    public boolean createUser(String userMail, String password, String name, String surname, Date subscription_date, String telephone, String address) throws SQLException {
+    public boolean createUser(String userMail, String password, String name, String surname, String telephone, String address) throws SQLException {
         int rows = 0;
-        String query = "INSERT INTO user (usermail, password, name, surname, subscription_date, telephone, address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO users (usermail, password, name, surname, telephone, address) VALUES (?, ?, ?, ?, ?, ?)";
+        //es su mySQL: INSERT INTO users (usermail, password, name, surname, telephone, address) VALUES ('gy', 'ok', 'giu','ye',null, 'mi');
         PreparedStatement pStatement = null;
 
         try {
@@ -27,9 +27,8 @@ public class UserDAO {
             pStatement.setString(2, password);
             pStatement.setString(3, name);
             pStatement.setString(4, surname);
-            pStatement.setDate(5, (java.sql.Date) subscription_date);
-            pStatement.setString(6, telephone);
-            pStatement.setString(7, address);
+            pStatement.setString(5, telephone);
+            pStatement.setString(6, address);
             rows = pStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e);
