@@ -65,7 +65,7 @@ public class GoToHomePage extends HttpServlet {
 			throws ServletException, IOException {
 		
 		// Redirect to the Home page and add missions to the parameters
-		String path = "/index.html";
+		String path = "WEB-INF/index.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		templateEngine.process(path, ctx, response.getWriter());
