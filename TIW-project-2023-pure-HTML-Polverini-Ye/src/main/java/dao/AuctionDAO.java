@@ -5,10 +5,7 @@ import beans.Auction;
 import beans.Bid;
 import beans.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class AuctionDAO {
@@ -22,7 +19,7 @@ public class AuctionDAO {
     public boolean createAuction(int idAuction, float initialPrice, float minRise, String expirationDateTime, String userMail) throws SQLException {
         if (isAuctionInDB(idAuction)) return false;
 
-        String query = "INSERT INTO dbaste.auctions (idAuction, initialPrice, minRise, expirationDateTime, userMail, isOpen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO dbaste.auctions (idAuction, initialPrice, minRise, expirationDateTime, userMail) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pStatement = null;
 
         try {
@@ -32,7 +29,6 @@ public class AuctionDAO {
             pStatement.setFloat(3, minRise);
             pStatement.setString(4, expirationDateTime);
             pStatement.setString(5, userMail);
-            pStatement.setBoolean(6, true);
             pStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -150,16 +146,19 @@ public class AuctionDAO {
     }
 
     public ArrayList<Auction> findAuctionsListByWordSearch(String word) throws SQLException{
+        Timestamp now = new Timestamp(System.currentTimeMillis());
         ArrayList<Auction> auctions = new ArrayList<Auction>();
         String query = "SELECT * FROM dbaste.auctions JOIN articles " +
                 "ON auctions.idAuction = articles.idAuction " +
-                "WHERE articles.name LIKE ? OR articles.description LIKE ?";
+                "WHERE articles.name LIKE ? OR articles.description LIKE ? AND expirationDateTime > ? " +
+                "ORDER BY expirationDateTime ASC";
         PreparedStatement pStatement = null;
 
         try{
             pStatement = connection.prepareStatement(query);
             pStatement.setString(1, "%" + word + "%");
             pStatement.setString(2, "%" + word + "%");
+            pStatement.setTimestamp(3, now);
             ResultSet result = pStatement.executeQuery();
 
             while (result.next()) {
@@ -185,35 +184,9 @@ public class AuctionDAO {
         return auctions;
     }
 
-    public boolean closeAuction(Auction auction) throws SQLException{
-        if(!auction.isOpen()) return false;
-
-        auction.setOpen(false);
-
-        String query = "UPDATE dbaste.auctions SET open = ? WHERE idAuction = ?";
-        PreparedStatement pStatement = null;
-
-        try {
-            pStatement = connection.prepareStatement(query);
-            pStatement.setBoolean(1, auction.isOpen());
-            pStatement.setInt(2, auction.getIdAuction());
-            pStatement.executeUpdate();
-        } catch (SQLException e){
-            throw new SQLException(e);
-        } finally {
-            try{
-                if (pStatement != null){
-                    pStatement.close();
-                }
-            } catch (Exception e2){
-                throw new SQLException(e2);
-            }
-        }
-        return true;
-    }
-
     public ArrayList<Object> getAuctionClosedInfos(Auction auction) throws SQLException{
-        if(auction.isOpen()) return null; //l'asta deve essere chiusa per poter calcolare i dati finali
+        if(isAuctionOpen(auction.getIdAuction())) return null;
+        //l'asta deve essere chiusa per poter calcolare i dati finali
 
         ArrayList<Object> auctionClosedInfos = new ArrayList<>();
 
@@ -263,39 +236,43 @@ public class AuctionDAO {
     }
 
     public boolean isAuctionOpen(int idAuction) throws SQLException{
-        String query = "SELECT isOpen FROM dbaste.auctions WHERE idAuction = ?";
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        String query = "SELECT * FROM dbaste.auctions WHERE idAuction = ? AND expirationDateTime > ?";
         PreparedStatement pStatement = null;
-        boolean open = false;
+        boolean isOpen = false;
 
-        try {
+        try{
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, idAuction);
+            pStatement.setTimestamp(2, now);
             ResultSet result = pStatement.executeQuery();
 
             if (result.next()) {
-                open = result.getBoolean("isOpen");
+                isOpen = true;
             }
-        } catch (SQLException e) {
+        } catch (SQLException e){
             throw new SQLException(e);
         } finally {
-            try {
-                if (pStatement != null) {
+            try{
+                if (pStatement != null){
                     pStatement.close();
                 }
-            } catch (Exception e2) {
+            } catch (Exception e2){
                 throw new SQLException(e2);
             }
         }
-        return open;
+        return isOpen;
     }
 
     public ArrayList<Auction> getAllOpenAuctions() throws SQLException{
+        Timestamp now = new Timestamp(System.currentTimeMillis());
         ArrayList<Auction> auctions = new ArrayList<Auction>();
-        String query = "SELECT * FROM dbaste.auctions WHERE isOpen = true";
+        String query = "SELECT * FROM dbaste.auctions WHERE expirationDateTime > ? ORDER BY expirationDateTime ASC";
         PreparedStatement pStatement = null;
 
-        try {
+        try{
             pStatement = connection.prepareStatement(query);
+            pStatement.setTimestamp(1, now);
             ResultSet result = pStatement.executeQuery();
 
             while (result.next()) {
@@ -307,46 +284,14 @@ public class AuctionDAO {
                 auction.setUserMail(result.getString("userMail"));
                 auctions.add(auction);
             }
-        } catch (SQLException e) {
+        } catch (SQLException e){
             throw new SQLException(e);
         } finally {
-            try {
-                if (pStatement != null) {
+            try{
+                if (pStatement != null){
                     pStatement.close();
                 }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-        return auctions;
-    }
-
-    public ArrayList<Auction> getALlClosedAuctions() throws SQLException{
-        ArrayList<Auction> auctions = new ArrayList<Auction>();
-        String query = "SELECT * FROM dbaste.auctions WHERE isOpen = false";
-        PreparedStatement pStatement = null;
-
-        try {
-            pStatement = connection.prepareStatement(query);
-            ResultSet result = pStatement.executeQuery();
-
-            while (result.next()) {
-                Auction auction = new Auction();
-                auction.setIdAuction(result.getInt("idAuction"));
-                auction.setInitialPrice(result.getFloat("initialPrice"));
-                auction.setMinRise(result.getFloat("minRise"));
-                auction.setExpirationDateTime(result.getString("expirationDateTime"));
-                auction.setUserMail(result.getString("userMail"));
-                auctions.add(auction);
-            }
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (pStatement != null) {
-                    pStatement.close();
-                }
-            } catch (Exception e2) {
+            } catch (Exception e2){
                 throw new SQLException(e2);
             }
         }

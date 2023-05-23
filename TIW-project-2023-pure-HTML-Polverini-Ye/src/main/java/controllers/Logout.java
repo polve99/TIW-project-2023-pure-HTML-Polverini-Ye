@@ -28,5 +28,4 @@ public class Logout extends HttpServlet{
         response.sendRedirect(path);
     }
 
-
 }
