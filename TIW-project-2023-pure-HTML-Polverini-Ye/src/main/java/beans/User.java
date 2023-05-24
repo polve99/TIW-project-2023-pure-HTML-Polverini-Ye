@@ -13,18 +13,17 @@ public class User {
     private Date subscription_date;
     private String telephone;
     private String address;
-    private List<String> navigationHistory = new ArrayList<>();
+    private List<String> navigationHistory = new ArrayList<>(); //CANCELLABILE
 
     public User() {
     	super();
     }
 
-    public User(String userMail, String password, String name, String surname, Date subscription_date, String telephone, String address) {
+    public User(String userMail, String password, String name, String surname, String telephone, String address) {
         this.userMail = userMail;
         this.password = password;
         this.name = name;
         this.surname = surname;
-        this.subscription_date = subscription_date;
         this.telephone = telephone;
         this.address = address;
     }
