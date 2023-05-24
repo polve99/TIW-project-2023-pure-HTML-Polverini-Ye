@@ -18,11 +18,6 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import dao.*;
-import beans.*;
-
-import java.util.List;
-
 @WebServlet("/GoToHomePage")
 public class GoToHomePage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -71,8 +66,6 @@ public class GoToHomePage extends HttpServlet {
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
-
-	
 	@Override
 	public void destroy() {
 		if (connection != null) {

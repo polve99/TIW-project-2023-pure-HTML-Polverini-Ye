@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset = "UTF-8">
+    <title> Buy Page </title>
+    <link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css"/>
+</head>
+
+<body>
+    <h1>BidWars' Buy Page</h1>
+    <h2>Hi <span th:text="${user.name}"></span>, here's a list of all the open auctions!</h2>
+
+    <form action="GoToBuy" method="POST">
+        <fieldset>
+            <div class="container">
+                <div class="row">
+                    <h1>List of open auctions</h1>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Max offer</th>
+                            <th>Time left</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="auction : ${auctions}">
+                            <td th:text="${auction.code}"></td>
+                            <td th:text="${auction.name}"></td>
+                            <td th:text="${auction.maxOffer}"></td>
+                            <td th:text="${auction.timeLeft}"></td>
+                            <td><a th:href="@{GoToAuction(code=${auction.code})}">Go to auction</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
+    <p th:class="error" th:text=" ${errorMsg}"></p>
+    </form>
+
+    <form action="GoFindKeyword" method="POST">
+        <fieldset>
+            <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword" required/></p>
+            <p><input type="submit" value="Search" /></p>
+
+            <div class="container">
+                <div class="row">
+                    <h1>List of open auctions for the keyword in input</h1>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Max offer</th>
+                            <th>Time left</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="auction : ${auctions}">
+                            <td th:text="${auction.code}"></td>
+                            <td th:text="${auction.name}"></td>
+                            <td th:text="${auction.maxOffer}"></td>
+                            <td th:text="${auction.timeLeft}"></td>
+                            <td><a th:href="@{GoToAuction(code=${auction.code})}">Go to auction</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
+        <p th:class="error" th:text=" ${errorMsg}"></p>
+    </form>
+
+    <div>
+        <a th:href="@{Logout}">Logout</a>
+    </div>
+</body>
+
+</html>
+
+
+<!--
+- lista di tutte le aste (la lista delle aste è ordinata per data+ora crescente)
+- L’elenco riporta: codice e nome degli articoli compresi nell’asta, offerta massima,
+tempo mancante (numero di giorni e ore) tra il momento (data ora) del login e la data e ora di chiusura dell’asta.
+- cliccando su un'asta si va alla pagina dettaglio asta
+- La pagina ACQUISTO contiene una form di ricerca per parola chiave.
+Quando l’acquirente invia una parola chiave la pagina ACQUISTO è aggiornata e mostra un elenco di aste aperte (la cui scadenza è posteriore alla data e ora dell’invio)
+per cui la parola chiave compare nel nome o nella descrizione di almeno uno degli articoli dell’asta. La lista è ordinata in modo decrescente in base al tempo
+(numero di giorni e ore) mancante alla chiusura
+- La pagina ACQUISTO contiene anche un elenco delle offerte aggiudicate all’utente con i dati degli articoli e il prezzo finale
+(CONTROLLA SE è LOGGATO: se no allora mostra una lista vuota)
+-->

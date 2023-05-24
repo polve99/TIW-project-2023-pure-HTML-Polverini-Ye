@@ -9,9 +9,7 @@ public class Auction {
     private float minRise;
     private String expirationDateTime;
     private String userMail;
-    private boolean isOpen;
 
-    //ops credo sia da togliere??
     private ArrayList<Article> articles;
 
     public Auction() {
@@ -25,7 +23,6 @@ public class Auction {
         this.userMail = userMail;
 
         this.articles = new ArrayList<>();
-        this.isOpen = true;
     }
 
     public int getIdAuction() {
@@ -68,13 +65,6 @@ public class Auction {
     }
     public void setArticles(ArrayList<Article> articles) {
         this.articles = articles;
-    }
-
-    public boolean isOpen() {
-        return isOpen;
-    }
-    public void setOpen(boolean isOpen) {
-        this.isOpen = isOpen;
     }
 
 }

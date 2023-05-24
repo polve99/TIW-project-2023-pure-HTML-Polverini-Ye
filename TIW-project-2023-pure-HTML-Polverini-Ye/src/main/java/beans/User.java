@@ -16,7 +16,7 @@ public class User {
     private List<String> navigationHistory = new ArrayList<>(); //CANCELLABILE
 
     public User() {
-    	super();
+        super();
     }
 
     public User(String userMail, String password, String name, String surname, String telephone, String address) {
@@ -77,19 +77,18 @@ public class User {
         this.address = address;
     }
     public List<String> getNavigationHistory() {
-		return navigationHistory;
-	}
+        return navigationHistory;
+    }
+    public void setNavigationHistory(List<String> navigationHistory) {
+        this.navigationHistory = navigationHistory;
+    }
 
-	public void setNavigationHistory(List<String> navigationHistory) {
-		this.navigationHistory = navigationHistory;
-	}
-	
-	public String getLastPage() {
-		return this.navigationHistory.get(this.navigationHistory.size() - 1);
-	}
-	
-	public void addNewPage(String url) {
-		this.navigationHistory.add(url);
-	}
+    public String getLastPage() {
+        return this.navigationHistory.get(this.navigationHistory.size() - 1);
+    }
+
+    public void addNewPage(String url) {
+        this.navigationHistory.add(url);
+    }
 
 }
