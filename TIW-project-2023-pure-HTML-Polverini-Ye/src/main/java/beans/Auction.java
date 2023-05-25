@@ -1,5 +1,6 @@
 package beans;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class Auction {
@@ -7,7 +8,7 @@ public class Auction {
     private int idAuction;
     private float initialPrice;
     private float minRise;
-    private String expirationDateTime;
+    private Timestamp expirationDateTime;
     private String userMail;
 
     private ArrayList<Article> articles;
@@ -19,7 +20,7 @@ public class Auction {
         this.idAuction = idAuction;
         this.initialPrice = initialPrice;
         this.minRise = minRise;
-        this.expirationDateTime = expirationDateTime;
+        this.expirationDateTime = Timestamp.valueOf(expirationDateTime);
         this.userMail = userMail;
 
         this.articles = new ArrayList<>();
@@ -46,10 +47,10 @@ public class Auction {
         this.minRise = minRise;
     }
 
-    public String getExpirationDateTime() {
+    public Timestamp getExpirationDateTime() {
         return expirationDateTime;
     }
-    public void setExpirationDateTime(String expirationDateTime) {
+    public void setExpirationDateTime(Timestamp expirationDateTime) {
         this.expirationDateTime = expirationDateTime;
     }
 
@@ -66,5 +67,4 @@ public class Auction {
     public void setArticles(ArrayList<Article> articles) {
         this.articles = articles;
     }
-
 }

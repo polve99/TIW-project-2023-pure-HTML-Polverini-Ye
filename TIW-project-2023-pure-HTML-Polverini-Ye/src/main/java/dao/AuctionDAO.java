@@ -95,7 +95,7 @@ public class AuctionDAO {
                 auction.setIdAuction(result.getInt("idAuction"));
                 auction.setInitialPrice(result.getFloat("initialPrice"));
                 auction.setMinRise(result.getFloat("minRise"));
-                auction.setExpirationDateTime(result.getString("expirationDateTime"));
+                auction.setExpirationDateTime(result.getTimestamp("expirationDateTime"));
                 auction.setUserMail(result.getString("userMail"));
             }
         } catch (SQLException e) {
@@ -127,7 +127,7 @@ public class AuctionDAO {
                 auction.setIdAuction(result.getInt("idAuction"));
                 auction.setInitialPrice(result.getFloat("initialPrice"));
                 auction.setMinRise(result.getFloat("minRise"));
-                auction.setExpirationDateTime(result.getString("expirationDateTime"));
+                auction.setExpirationDateTime(result.getTimestamp("expirationDateTime"));
                 auction.setUserMail(result.getString("userMail"));
                 auctions.add(auction);
             }
@@ -149,9 +149,9 @@ public class AuctionDAO {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         ArrayList<Auction> auctions = new ArrayList<Auction>();
         String query = "SELECT * FROM dbaste.auctions JOIN articles " +
-                "ON auctions.idAuction = articles.idAuction " +
-                "WHERE articles.name LIKE ? OR articles.description LIKE ? AND expirationDateTime > ? " +
-                "ORDER BY expirationDateTime ASC";
+        	    "ON auctions.idAuction = articles.idAuction " +
+        	    "WHERE (articles.name LIKE ? OR articles.description LIKE ?) AND expirationDateTime > ? " +
+        	    "ORDER BY expirationDateTime ASC";
         PreparedStatement pStatement = null;
 
         try{
@@ -166,7 +166,7 @@ public class AuctionDAO {
                 auction.setIdAuction(result.getInt("idAuction"));
                 auction.setInitialPrice(result.getFloat("initialPrice"));
                 auction.setMinRise(result.getFloat("minRise"));
-                auction.setExpirationDateTime(result.getString("expirationDateTime"));
+                auction.setExpirationDateTime(result.getTimestamp("expirationDateTime"));
                 auction.setUserMail(result.getString("userMail"));
                 auctions.add(auction);
             }
@@ -280,7 +280,7 @@ public class AuctionDAO {
                 auction.setIdAuction(result.getInt("idAuction"));
                 auction.setInitialPrice(result.getFloat("initialPrice"));
                 auction.setMinRise(result.getFloat("minRise"));
-                auction.setExpirationDateTime(result.getString("expirationDateTime"));
+                auction.setExpirationDateTime(result.getTimestamp("expirationDateTime"));
                 auction.setUserMail(result.getString("userMail"));
                 auctions.add(auction);
             }
@@ -318,7 +318,7 @@ public class AuctionDAO {
                 auction.setIdAuction(result.getInt("idAuction"));
                 auction.setInitialPrice(result.getFloat("initialPrice"));
                 auction.setMinRise(result.getFloat("minRise"));
-                auction.setExpirationDateTime(result.getString("expirationDateTime"));
+                auction.setExpirationDateTime(result.getTimestamp("expirationDateTime"));
                 auction.setUserMail(result.getString("userMail"));
                 auctions.add(auction);
             }
@@ -354,7 +354,7 @@ public class AuctionDAO {
                 auction.setIdAuction(result.getInt("idAuction"));
                 auction.setInitialPrice(result.getFloat("initialPrice"));
                 auction.setMinRise(result.getFloat("minRise"));
-                auction.setExpirationDateTime(result.getString("expirationDateTime"));
+                auction.setExpirationDateTime(result.getTimestamp("expirationDateTime"));
                 auction.setUserMail(result.getString("userMail"));
                 auctions.add(auction);
             }

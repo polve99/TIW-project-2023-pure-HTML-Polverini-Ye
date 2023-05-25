@@ -3,8 +3,11 @@ package controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -14,8 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import beans.Article;
 import beans.Auction;
+import beans.Bid;
+import beans.User;
+import dao.ArticleDAO;
 import dao.AuctionDAO;
+import dao.BidDAO;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -27,11 +35,12 @@ public class GoToBuy extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
     private TemplateEngine templateEngine = null;
-
+    private AuctionDAO auctionDAO;
+    private ArticleDAO articleDAO;
+    private BidDAO bidDAO;
 
     public GoToBuy() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -39,48 +48,84 @@ public class GoToBuy extends HttpServlet {
         connection = ConnectionHandler.getConnection(getServletContext());
         ServletContext servletContext = getServletContext();
         templateEngine = ThymeleafTemplateEngineCreator.getTemplateEngine(servletContext);
+        auctionDAO = new AuctionDAO(connection);
+        articleDAO = new ArticleDAO(connection);
+        bidDAO = new BidDAO(connection);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	System.out.println("ok servlet doget");
-    	//here's the list for the auctions that will be shown in the page
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect(request.getContextPath() + "/Login");
+            return;
+        }
 
-    	System.out.println("ok servlet");
+        User user = (User) session.getAttribute("user");
+
+        String keyword = request.getParameter("keyword");
+
         List<Auction> auctionListOpen = new ArrayList<>();
         AuctionDAO auctionDAO = new AuctionDAO(connection);
 
         try {
-            auctionListOpen = auctionDAO.getAllOpenAuctions();
+            if (keyword != null && !keyword.isBlank()) {
+                auctionListOpen = auctionDAO.findAuctionsListByWordSearch(keyword);
+            } else {
+                auctionListOpen = auctionDAO.getAllOpenAuctions();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding open auctions");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding auctions");
+            return;
         }
 
-        final WebContext ctw = new WebContext(request, response, getServletContext(),request.getLocale());
-        String path = "WEB-INF/templates/BuyPage.html";
+        List<Map<String, Object>> auctionInfoList = new ArrayList<>();
 
-        if (auctionListOpen.size() == 0) {
-            ctw.setVariable("NoAuctionsMsg", "there are not any open auctions at this time.");
-        }else if(auctionListOpen.size() != 0){
-            ctw.setVariable("auctions", auctionListOpen);
-        }else {
-        	ctw.setVariable("NoAuctionsMsg1", "oggetto null.");
+        for (Auction auction : auctionListOpen) {
+            List<Article> articles = null;
+            try {
+                articles = articleDAO.findArticlesListByIdAuction(auction.getIdAuction());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Bid maxBid = null;
+            try {
+                maxBid = bidDAO.findMaxBidInAuction(auction.getIdAuction());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            Timestamp expirationDateTime = auction.getExpirationDateTime();
+
+            Map<String, Object> auctionInfo = new HashMap<>();
+            auctionInfo.put("auctionId", auction.getIdAuction());
+            auctionInfo.put("articles", articles);
+            auctionInfo.put("maxBid", maxBid != null ? maxBid.getBidValue() : null); // Imposta il valore bidValue
+
+            auctionInfo.put("expirationDateTime", expirationDateTime);
+
+            auctionInfoList.add(auctionInfo);
         }
-        //HttpSession session = request.getSession();
-        //session.setAttribute("auctions", auctionListOpen);
-        //session.setAttribute("session.auctions", auctionListOpen);
 
-        templateEngine.process(path, ctw,response.getWriter());
-        
-    }
+        final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
+        String path = "/WEB-INF/templates/BuyPage.html";
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
+        if (auctionListOpen.isEmpty()) {
+            if (keyword != null && !keyword.isBlank()) {
+                ctx.setVariable("NoAuctionsMsg", "There are no open auctions for the keyword \"" + keyword + "\"");
+            } else {
+                ctx.setVariable("NoAuctionsMsg", "There are no open auctions at this time.");
+            }
+        } else {
+            ctx.setVariable("auctionInfoList", auctionInfoList);
+        }
+
+        ctx.setVariable("user", user.getName());
+
+        templateEngine.process(path, ctx, response.getWriter());
     }
 
     @Override
     public void destroy() {
         ConnectionHandler.closeConnection(connection);
     }
-
 }

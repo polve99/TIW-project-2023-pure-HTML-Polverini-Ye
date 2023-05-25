@@ -3,7 +3,9 @@ package controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -13,10 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import beans.Auction;
+import beans.Article;
+import beans.Bid;
 import dao.AuctionDAO;
+import dao.ArticleDAO;
+import dao.BidDAO;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-
 import utilis.ConnectionHandler;
 import utilis.ThymeleafTemplateEngineCreator;
 
@@ -26,6 +31,8 @@ public class GoToAuction extends HttpServlet {
     private Connection connection = null;
     private TemplateEngine templateEngine = null;
     private AuctionDAO auctionDAO;
+    private ArticleDAO articleDAO;
+    private BidDAO bidDAO;
 
     public GoToAuction() {
         super();
@@ -37,6 +44,8 @@ public class GoToAuction extends HttpServlet {
         ServletContext servletContext = getServletContext();
         templateEngine = ThymeleafTemplateEngineCreator.getTemplateEngine(servletContext);
         auctionDAO = new AuctionDAO(connection);
+        articleDAO = new ArticleDAO(connection);
+        bidDAO = new BidDAO(connection);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,24 +56,31 @@ public class GoToAuction extends HttpServlet {
             Auction auction = auctionDAO.findAuctionByIdAuction(auctionId);
 
             if (auction != null) {
-                List<Object> auctionClosedInfos = auctionDAO.getAuctionClosedInfos(auction);
+                List<Article> articles = articleDAO.findArticlesListByIdAuction(auctionId);
+                Bid maxBid = bidDAO.findMaxBidInAuction(auctionId);
+                long timeLeftMillis = auction.getExpirationDateTime().getTime() - System.currentTimeMillis();
 
-                if (auctionClosedInfos == null) {
-                    // Auction is still open
-                    // TODO: Implement the logic for displaying the auction details
-                    // For now, let's just forward to a placeholder page
-                    String path = "WEB-INF/templates/AuctionDetailsOpen.html";
-                    final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
-                    templateEngine.process(path, ctx, response.getWriter());
-                } else {
-                    // Auction is closed
-                    // TODO: Implement the logic for displaying the closed auction details
-                    // For now, let's just forward to a placeholder page
-                    String path = "WEB-INF/templates/AuctionDetailsClosed.html";
-                    final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
-                    ctx.setVariable("auctionClosedInfos", auctionClosedInfos);
-                    templateEngine.process(path, ctx, response.getWriter());
-                }
+                // Conversione del tempo rimanente in giorni, ore, minuti e secondi
+                long seconds = timeLeftMillis / 1000;
+                long days = seconds / (24 * 60 * 60);
+                seconds %= (24 * 60 * 60);
+                long hours = seconds / (60 * 60);
+                seconds %= (60 * 60);
+                long minutes = seconds / 60;
+                seconds %= 60;
+
+                String timeLeftFormatted = String.format("%d days, %02d:%02d:%02d", days, hours, minutes, seconds);
+
+                Map<String, Object> auctionInfo = new HashMap<>();
+                auctionInfo.put("idAuction", auction.getIdAuction());
+                auctionInfo.put("articles", articles);
+                auctionInfo.put("maxBid", maxBid != null ? maxBid.getBidValue() : "No bids yet");
+                auctionInfo.put("timeLeft", timeLeftFormatted);
+
+                request.setAttribute("auctionInfo", auctionInfo);
+
+                // Non viene richiamato il motore del template Thymeleaf
+
             } else {
                 // Auction not found
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Auction not found");

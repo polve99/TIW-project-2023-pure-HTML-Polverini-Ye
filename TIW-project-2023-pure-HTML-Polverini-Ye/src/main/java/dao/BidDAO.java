@@ -161,16 +161,16 @@ public class BidDAO {
 
     public Bid findMaxBidInAuction(int idAuction) throws SQLException {
         Bid bid = new Bid();
-        String query = "SELECT * FROM dbaste.bids WHERE idAuction = ? AND bidValue = {SELECT MAX(bidValue) FROM bids WHERE idAuction = ?}";
+        String query = "SELECT * FROM dbaste.bids WHERE idAuction = ? AND bidValue = (SELECT MAX(bidValue) FROM dbaste.bids WHERE idAuction = ?)";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
 
-        try{
+        try {
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, idAuction);
             pStatement.setInt(2, idAuction);
             resultSet = pStatement.executeQuery();
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 bid.setIdBid(resultSet.getInt("idBid"));
                 bid.setBidValue(resultSet.getFloat("bidValue"));
                 bid.setBidDateTime(resultSet.getTimestamp("bidDateTime"));
@@ -197,6 +197,7 @@ public class BidDAO {
         }
         return bid;
     }
+
 
     public ArrayList<Bid> getBidsListInDescOrder() throws SQLException {
         ArrayList<Bid> orderedBids = new ArrayList<Bid>();
@@ -237,157 +238,4 @@ public class BidDAO {
         return orderedBids;
     }
 
-    /* lascio nel caso fossero da riguardare ma le ho riscritte sopra (credo bene)
-
-    public Bid findBidByUser(String userMail) throws SQLException {
-        Bid bid = null;
-        String query  = "SELECT * FROM bids WHERE userMail = ?";
-        PreparedStatement pstatement = null;
-        ResultSet res = null;
-        try {
-            pstatement = connection.prepareStatement(query);
-            pstatement.setString(1, userMail);
-            res = pstatement.executeQuery();
-            if (!res.next()) return null;
-            int id = res.getInt("bidId");
-            int value = res.getInt("bidValue");
-            Timestamp creationDateTime = res.getTimestamp("bidDateTime");
-            int auctionId = res.getInt("idAuction");
-            bid = new Bid(id, userMail, value, creationDateTime, auctionId);
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (res != null) {
-                    res.close();
-                }
-            } catch (Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if (pstatement != null) {
-                    pstatement.close();
-                }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-        return bid;
-    }
-
-    public Bid findBidByAuction(int idAuction) throws SQLException {
-        Bid bid = null;
-        String query  = "SELECT * FROM bids WHERE idAuction = ?";
-        PreparedStatement pstatement = null;
-        ResultSet res = null;
-        try {
-            pstatement = connection.prepareStatement(query);
-            pstatement.setInt(1, idAuction);
-            res = pstatement.executeQuery();
-            if (!res.next()) return null;
-            int id = res.getInt("bidId");
-            int value = res.getInt("bidValue");
-            Timestamp creationDateTime = res.getTimestamp("bidDateTime");
-            String userMail = res.getString("userMail");
-            bid = new Bid(id, userMail, value, creationDateTime, idAuction);
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (res != null) {
-                    res.close();
-                }
-            } catch (Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if (pstatement != null) {
-                    pstatement.close();
-                }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-
-        return bid;
-    }
-
-    public Bid findMaxBid(int idAuction) throws SQLException {
-        Bid bid = null;
-        String query = "SELECT * FROM bids WHERE idAuction = ? AND bidValue = {SELECT MAX(bidValue) FROM bids WHERE idAuction = ?}";
-        PreparedStatement pstatement = null;
-        ResultSet res = null;
-        try {
-            pstatement = connection.prepareStatement(query);
-            pstatement.setInt(1, idAuction);
-            pstatement.setInt(2, idAuction);
-            res = pstatement.executeQuery();
-            if (!res.next()) return null;
-            int id = res.getInt("bidId");
-            float value = res.getFloat("bidValue");
-            Timestamp creationDateTime = res.getTimestamp("bidDateTime");
-            String userMail = res.getString("userMail");
-            bid = new Bid(id, userMail, value, creationDateTime, idAuction);
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (res != null) {
-                    res.close();
-                }
-            } catch (Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if (pstatement != null) {
-                    pstatement.close();
-                }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-
-        return bid;
-    }
-
-    public List<Bid> orderBidList() throws SQLException {
-        List<Bid> bids = null;
-        String query = "SELECT * FROM bids ORDER BY bidValue DESC()";
-        PreparedStatement pstatement = null;
-        ResultSet res = null;
-        try {
-            pstatement = connection.prepareStatement(query);
-            res = pstatement.executeQuery();
-            bids = new ArrayList<>();
-            while (res.next()) {
-                int id = res.getInt("bidId");
-                float value = res.getFloat("bidValue");
-                Timestamp creationDateTime = res.getTimestamp("bidDateTime");
-                String userMail = res.getString("userMail");
-                int idAuction = res.getInt("idAuction");
-                bids.add(new Bid(id, userMail, value, creationDateTime, idAuction));
-            }
-
-        } catch (SQLException e) {
-            throw new SQLException(e);
-        } finally {
-            try {
-                if (res != null) {
-                    res.close();
-                }
-            } catch (Exception e1) {
-                throw new SQLException(e1);
-            }
-            try {
-                if (pstatement != null) {
-                    pstatement.close();
-                }
-            } catch (Exception e2) {
-                throw new SQLException(e2);
-            }
-        }
-        return bids;
-    }
-
-     */
 }
