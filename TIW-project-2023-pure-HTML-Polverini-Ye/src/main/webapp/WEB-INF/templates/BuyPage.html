@@ -9,7 +9,7 @@
 
 <body>
     <h1>BidWars' Buy Page</h1>
-    <h2>Hi <span th:text="${user.name}"></span>, here's a list of all the open auctions!</h2>
+    <h2>Hi , here's a list of all the open auctions!</h2>
 
     <form action="GoToBuy" method="POST">
         <fieldset>
@@ -26,12 +26,12 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="auction : ${auctions}">
-                            <td th:text="${auction.code}"></td>
-                            <td th:text="${auction.name}"></td>
-                            <td th:text="${auction.maxOffer}"></td>
-                            <td th:text="${auction.timeLeft}"></td>
-                            <td><a th:href="@{GoToAuction(code=${auction.code})}">Go to auction</a></td>
+                        <tr th:each="auction : ${session.auctions}">
+                            <td th:text="${session.auction.code}"></td>
+                            <td th:text="${session.auction.name}"></td>
+                            <td th:text="${session.auction.maxOffer}"></td>
+                            <td th:text="${session.auction.timeLeft}"></td>
+                            <td><a th:href="@{GoToAuction(code=${session.auction.code})}">Go to auction</a></td>
                         </tr>
                         </tbody>
                     </table>
@@ -59,7 +59,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="auction : ${auctions}">
+                        <tr th:each="auction, i : ${auctions}">
                             <td th:text="${auction.code}"></td>
                             <td th:text="${auction.name}"></td>
                             <td th:text="${auction.maxOffer}"></td>

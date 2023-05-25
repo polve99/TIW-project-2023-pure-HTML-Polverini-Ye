@@ -15,9 +15,10 @@ public class UserDAO {
         this.connection = connection;
     }
 
-    public boolean createUser(String userMail, String password, String name, String surname, String telephone, String address) throws SQLException {
+    public User createUser(String userMail, String password, String name, String surname, String telephone, String address) throws SQLException {
         int rows = 0;
-        String query = "INSERT INTO dbaste.users (usermail, password, name, surname, telephone, address) VALUES (?, ?, ?, ?, ?, ?)";
+        User user = null;
+        String query = "INSERT INTO dbaste.users (userMail, password, name, surname, telephone, address) VALUES (?, ?, ?, ?, ?, ?)";
         //es su mySQL: INSERT INTO dbaste.users (usermail, password, name, surname, telephone, address) VALUES ('gy', 'ok', 'giu','ye',null, 'mi');
         PreparedStatement pStatement = null;
 
@@ -29,7 +30,7 @@ public class UserDAO {
             pStatement.setString(4, surname);
             pStatement.setString(5, telephone);
             pStatement.setString(6, address);
-            rows = pStatement.executeUpdate();
+            /*rows = */pStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e);
         } finally {
@@ -41,7 +42,7 @@ public class UserDAO {
                 throw new SQLException(e1);
             }
         }
-        return (rows > 0);
+        return new User(userMail, password, name, surname, telephone, address);
     }
 
     public boolean updateUser(User user) throws SQLException {

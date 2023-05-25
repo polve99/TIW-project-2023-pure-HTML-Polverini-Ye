@@ -10,13 +10,13 @@
 
 <body>
     <h1>BidWars</h1>
-    <h2>Hi <span th:text="${user.name}"></span>, what do you want to do?</h2>
+    <h2>Hi <span th:text="${session.user.name}"></span>, what do you want to do?</h2>
 
     <br>
-
-    <p><a href="BuyPage.html">BUY SOMETHING<br></a></p>
+	<div>
+    <p><a href="BuyPage.html" th:href="@{/GoToBuy}">BUY SOMETHING<br></a></p>
     <p><a href="SellPage.html">SELL SOMETHING<br></a></p>
-
+	</div>
     <div class="logout">
         <a th:href="@{Logout}">Logout</a>
     </div>

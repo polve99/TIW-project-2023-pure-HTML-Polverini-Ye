@@ -297,5 +297,78 @@ public class AuctionDAO {
         }
         return auctions;
     }
+    
+    public ArrayList<Auction> getAllOpenAuctionsByUser(String userMail) throws SQLException{
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        String mail = userMail;
+        ArrayList<Auction> auctions = new ArrayList<Auction>();
+        String query = "SELECT * FROM dbaste.auctions WHERE expirationDateTime > ? AND userMail = ? ORDER BY expirationDateTime ASC";
+        PreparedStatement pStatement = null;
+
+        try{
+            pStatement = connection.prepareStatement(query);
+            pStatement.setTimestamp(1, now);
+            pStatement.setString(2, mail);
+            ResultSet result = pStatement.executeQuery();
+
+            while (result.next()) {
+                Auction auction = new Auction();
+                auction.setIdAuction(result.getInt("idAuction"));
+                auction.setInitialPrice(result.getFloat("initialPrice"));
+                auction.setMinRise(result.getFloat("minRise"));
+                auction.setExpirationDateTime(result.getString("expirationDateTime"));
+                auction.setUserMail(result.getString("userMail"));
+                auctions.add(auction);
+            }
+        } catch (SQLException e){
+            throw new SQLException(e);
+        } finally {
+            try{
+                if (pStatement != null){
+                    pStatement.close();
+                }
+            } catch (Exception e2){
+                throw new SQLException(e2);
+            }
+        }
+        return auctions;
+    }
+    
+    public ArrayList<Auction> getAllClosedAuctionsByUser(String userMail) throws SQLException{
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        String mail = userMail;
+        ArrayList<Auction> auctions = new ArrayList<Auction>();
+        String query = "SELECT * FROM dbaste.auctions WHERE expirationDateTime <= ? AND userMail = ? ORDER BY expirationDateTime ASC";
+        PreparedStatement pStatement = null;
+
+        try{
+            pStatement = connection.prepareStatement(query);
+            pStatement.setTimestamp(1, now);
+            pStatement.setString(2, mail);
+            ResultSet result = pStatement.executeQuery();
+
+            while (result.next()) {
+                Auction auction = new Auction();
+                auction.setIdAuction(result.getInt("idAuction"));
+                auction.setInitialPrice(result.getFloat("initialPrice"));
+                auction.setMinRise(result.getFloat("minRise"));
+                auction.setExpirationDateTime(result.getString("expirationDateTime"));
+                auction.setUserMail(result.getString("userMail"));
+                auctions.add(auction);
+            }
+        } catch (SQLException e){
+            throw new SQLException(e);
+        } finally {
+            try{
+                if (pStatement != null){
+                    pStatement.close();
+                }
+            } catch (Exception e2){
+                throw new SQLException(e2);
+            }
+        }
+        return auctions;
+    }
+
 
 }
