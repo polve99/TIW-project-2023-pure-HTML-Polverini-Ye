@@ -2,81 +2,83 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-    <meta charset = "UTF-8">
-    <title> Buy Page </title>
-    <link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css"/>
+    <meta charset="UTF-8">
+    <title>Buy Page</title>
+    <link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css" />
 </head>
 
 <body>
-    <h1>BidWars' Buy Page</h1>
-    <h2>Hi , here's a list of all the open auctions!</h2>
+<h1>BidWars' Buy Page</h1>
+<h2>Hi, here's a list of all the open auctions!</h2>
 
-    <form action="GoToBuy" method="POST">
-        <fieldset>
-            <div class="container">
-                <div class="row">
-                    <h1>List of open auctions</h1>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Name</th>
-                            <th>Max offer</th>
-                            <th>Time left</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="auction : ${session.auctions}">
-                            <td th:text="${session.auction.code}"></td>
-                            <td th:text="${session.auction.name}"></td>
-                            <td th:text="${session.auction.maxOffer}"></td>
-                            <td th:text="${session.auction.timeLeft}"></td>
-                            <td><a th:href="@{GoToAuction(code=${session.auction.code})}">Go to auction</a></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+<form action="GoToBuy" method="POST">
+    <fieldset>
+        <div class="container">
+            <div class="row">
+                <h1>List of open auctions</h1>
+                <p th:text="${NoAuctionsMsg}">ok</p>
+                
+                
+                
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Mail</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+	                    <tr th:each="auction : ${auctions}">
+	                    	<td><!--<a th:href="@{GoToAuction(code=${auction.code})}">Go to auction</a>  --> ok3</td>
+	                     
+	                        <td th:text="${auction.userMail}"></td>
+	
+	                        
+	                    </tr>
+                    </tbody>
+                    
+
+                </table>
             </div>
-        </fieldset>
-    <p th:class="error" th:text=" ${errorMsg}"></p>
-    </form>
+        </div>
+    </fieldset>
+    <p th:class="error" th:text="${errorMsg}"></p>
+</form>
 
-    <form action="GoFindKeyword" method="POST">
-        <fieldset>
-            <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword" required/></p>
-            <p><input type="submit" value="Search" /></p>
+<form action="GoFindKeyword" method="POST">
+    <fieldset>
+        <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword" required /></p>
+        <p><input type="submit" value="Search" /></p>
 
-            <div class="container">
-                <div class="row">
-                    <h1>List of open auctions for the keyword in input</h1>
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Name</th>
-                            <th>Max offer</th>
-                            <th>Time left</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="auction, i : ${auctions}">
-                            <td th:text="${auction.code}"></td>
-                            <td th:text="${auction.name}"></td>
-                            <td th:text="${auction.maxOffer}"></td>
-                            <td th:text="${auction.timeLeft}"></td>
-                            <td><a th:href="@{GoToAuction(code=${auction.code})}">Go to auction</a></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="container">
+            <div class="row">
+                <h1>List of open auctions for the keyword in input</h1>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Max offer</th>
+                        <th>Time left</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="auction, i : ${auctions}">
+                        <td th:text="${auction.idAuction}"></td>
+                        <td><a th:href="@{GoToAuction(code=${auction.code})}">Go to auction</a></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </fieldset>
-        <p th:class="error" th:text=" ${errorMsg}"></p>
-    </form>
+        </div>
+    </fieldset>
+    <p th:class="error" th:text="${errorMsg}"></p>
+</form>
 
-    <div>
-        <a th:href="@{Logout}">Logout</a>
-    </div>
+<div>
+    <a th:href="@{Logout}">Logout</a>
+</div>
 </body>
 
 </html>

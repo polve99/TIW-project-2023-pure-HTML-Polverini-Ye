@@ -28,6 +28,7 @@ public class GoToBuy extends HttpServlet {
     private Connection connection = null;
     private TemplateEngine templateEngine = null;
 
+
     public GoToBuy() {
         super();
         // TODO Auto-generated constructor stub
@@ -41,23 +42,17 @@ public class GoToBuy extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = "WEB-INF/templates/BuyPage.html";
-        final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
-        templateEngine.process(path, ctx, response.getWriter());
-    }
+    	System.out.println("ok servlet doget");
+    	//here's the list for the auctions that will be shown in the page
 
-    //TODO: L’elenco riporta: codice e nome degli articoli compresi nell’asta, offerta massima,
-    // tempo mancante (numero di giorni e ore) tra il momento (data ora) del login e la data e ora di chiusura dell’asta.
-    // per ora ho messo solo la lista delle auctions aperte
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //here's the list for the auctions that will be shown in the page
-
+    	System.out.println("ok servlet");
         List<Auction> auctionListOpen = new ArrayList<>();
         AuctionDAO auctionDAO = new AuctionDAO(connection);
 
         try {
             auctionListOpen = auctionDAO.getAllOpenAuctions();
         } catch (SQLException e) {
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding open auctions");
         }
 
@@ -66,12 +61,21 @@ public class GoToBuy extends HttpServlet {
 
         if (auctionListOpen.size() == 0) {
             ctw.setVariable("NoAuctionsMsg", "there are not any open auctions at this time.");
-        }else{
+        }else if(auctionListOpen.size() != 0){
             ctw.setVariable("auctions", auctionListOpen);
+        }else {
+        	ctw.setVariable("NoAuctionsMsg1", "oggetto null.");
         }
-        HttpSession session = request.getSession();
-        session.setAttribute("auctions", auctionListOpen);
+        //HttpSession session = request.getSession();
+        //session.setAttribute("auctions", auctionListOpen);
+        //session.setAttribute("session.auctions", auctionListOpen);
+
         templateEngine.process(path, ctw,response.getWriter());
+        
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
     }
 
     @Override

@@ -285,6 +285,7 @@ public class AuctionDAO {
                 auctions.add(auction);
             }
         } catch (SQLException e){
+        	e.printStackTrace();
             throw new SQLException(e);
         } finally {
             try{
@@ -292,6 +293,7 @@ public class AuctionDAO {
                     pStatement.close();
                 }
             } catch (Exception e2){
+            	e2.printStackTrace();
                 throw new SQLException(e2);
             }
         }
