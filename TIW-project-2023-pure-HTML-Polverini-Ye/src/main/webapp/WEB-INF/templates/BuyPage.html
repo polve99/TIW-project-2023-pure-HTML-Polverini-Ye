@@ -9,30 +9,30 @@
 
 <body>
     <h1>BidWars' Buy Page</h1>
-    <h2>Hi <span th:text="${user}"></span>, here's a list of all the open auctions!</h2>
+    <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the open auctions!</h2>
 
     <form action="GoToBuy" method="GET">
         <fieldset>
             <div class="container">
                 <div class="row">
                     <h1>List of open auctions</h1>
-                    <p th:text="${NoAuctionsMsg}"></p>
+                    <p th:text="${auctionInfoListOpen.isEmpty() ? 'No open auctions available' : ''}"></p>
 
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>Auction Id</th>
-								<th>Articles</th>
-								<th>Max Bid</th>
-								<th>Time Left</th>
+                                <th>Articles</th>
+                                <th>Max Bid</th>
+                                <th>Time Left</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="auctionInfo : ${auctionInfoList}">
+                            <tr th:each="auctionInfo : ${auctionInfoListOpen}">
                                 <td th:text="${auctionInfo['idAuction']}"></td>
                                 <td>
                                     <ul>
-                                        <li th:each="article : ${auctionInfo['articles']}" th:text="${article['articleName']}"></li>
+                                        <li th:each="article : ${auctionInfo['articles']}" th:text="${article.articleName}"></li>
                                     </ul>
                                 </td>
                                 <td th:text="${auctionInfo['maxBid']}"></td>
@@ -48,6 +48,43 @@
         <p th:class="error" th:text="${errorMsg}"></p>
         <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword" required /></p>
         <p><input type="submit" value="Search" /></p>
+    </form>
+
+    <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the closed auctions you won!</h2>
+
+    <form action="GoToWonAuctions" method="GET">
+        <fieldset>
+            <div class="container">
+                <div class="row">
+                    <h1>List of auctions you won</h1>
+                    <p th:text="${auctionInfoListWon.isEmpty() ? 'You haven\'t won any auctions.' : ''}"></p>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Auction Id</th>
+                                <th>Articles</th>
+                                <th>Winning bid</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${auctionInfoListWon.isEmpty()}">
+                                <td colspan="3">You haven't won any auctions.</td>
+                            </tr>
+                            <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
+                                <td th:text="${auctionInfoListWon['idAuction']}"></td>
+                                <td>
+                                    <ul>
+                                        <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>
+                                    </ul>
+                                </td>
+                                <td th:text="${auctionInfoListWon['maxBid']}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
     </form>
 
     <div>

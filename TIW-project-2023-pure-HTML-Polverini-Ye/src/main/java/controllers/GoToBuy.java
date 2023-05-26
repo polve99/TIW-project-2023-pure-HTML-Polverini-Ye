@@ -104,28 +104,53 @@ public class GoToBuy extends HttpServlet {
             auctionInfoList.add(auctionInfo);
         }
 
-        final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
-        String path = "/WEB-INF/templates/BuyPage.html";
+        try {
+            ArrayList<Auction> wonAuctions = auctionDAO.getWonClosedAuctionsByUser(user.getUserMail());
+            ArrayList<Map<String, Object>> wonAuctionInfoList = new ArrayList<>();
 
-        if (auctionListOpen.isEmpty()) {
-            if (keyword != null && !keyword.isBlank()) {
-                ctx.setVariable("NoAuctionsMsg", "There are no open auctions for the keyword \"" + keyword + "\"");
-            } else {
-                ctx.setVariable("NoAuctionsMsg", "There are no open auctions at this time.");
+            for (Auction auction : wonAuctions) {
+                ArrayList<Object> auctionClosedInfos = auctionDAO.getAuctionClosedInfosForTable(auction);
+
+                Map<String, Object> auctionInfo = new HashMap<>();
+
+                auctionInfo.put("idAuction", auction.getIdAuction());
+                auctionInfo.put("maxBid", ((Bid) auctionClosedInfos.get(0)).getBidValue());
+                auctionInfo.put("articles", auctionClosedInfos.get(1));
+
+                wonAuctionInfoList.add(auctionInfo);
             }
-        } else {
-            ctx.setVariable("auctionInfoList", auctionInfoList);
+
+            final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
+            String path = "/WEB-INF/templates/BuyPage.html";
+
+            if (auctionListOpen.isEmpty()) {
+                if (keyword != null && !keyword.isBlank()) {
+                    ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions for the keyword \"" + keyword + "\"");
+                } else {
+                    ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions at this time.");
+                }
+            } else {
+                ctx.setVariable("auctionInfoListOpen", auctionInfoList);
+            }
+
+            if (wonAuctionInfoList.isEmpty()) {
+                ctx.setVariable("NoWonAuctionsMsg", "You haven't won any auctions yet.");
+            } else {
+                ctx.setVariable("auctionInfoListWon", wonAuctionInfoList);
+            }
+
+            ctx.setVariable("user", user.getName());
+
+            templateEngine.process(path, ctx, response.getWriter());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error retrieving won auctions");
         }
-
-        ctx.setVariable("user", user.getName());
-
-        templateEngine.process(path, ctx, response.getWriter());
     }
 
     private String formatTimeLeft(Timestamp expirationDateTime) {
         long timeLeftMillis = expirationDateTime.getTime() - System.currentTimeMillis();
 
-        // Conversione del tempo rimanente in giorni, ore, minuti e secondi
         long seconds = timeLeftMillis / 1000;
         long days = seconds / (24 * 60 * 60);
         seconds %= (24 * 60 * 60);

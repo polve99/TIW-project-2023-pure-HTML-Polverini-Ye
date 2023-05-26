@@ -286,7 +286,7 @@ public class AuctionDAO {
                 auctions.add(auction);
             }
         } catch (SQLException e){
-        	e.printStackTrace();
+            e.printStackTrace();
             throw new SQLException(e);
         } finally {
             try{
@@ -294,13 +294,13 @@ public class AuctionDAO {
                     pStatement.close();
                 }
             } catch (Exception e2){
-            	e2.printStackTrace();
+                e2.printStackTrace();
                 throw new SQLException(e2);
             }
         }
         return auctions;
     }
-    
+
     public ArrayList<Auction> getAllOpenAuctionsByUser(String userMail) throws SQLException{
         Timestamp now = new Timestamp(System.currentTimeMillis());
         String mail = userMail;
@@ -336,7 +336,7 @@ public class AuctionDAO {
         }
         return auctions;
     }
-    
+
     public ArrayList<Auction> getAllClosedAuctionsByUser(String userMail) throws SQLException{
         Timestamp now = new Timestamp(System.currentTimeMillis());
         String mail = userMail;
@@ -373,5 +373,67 @@ public class AuctionDAO {
         return auctions;
     }
 
+    public ArrayList<Auction> getWonClosedAuctionsByUser(String userMail) throws SQLException {
+        ArrayList<Auction> auctions = new ArrayList<Auction>();
+        String query = "SELECT a.idAuction, a.initialPrice, a.minRise, a.expirationDateTime, a.userMail " +
+                "FROM dbaste.auctions AS a " +
+                "INNER JOIN ( " +
+                "SELECT b.idAuction, MAX(b.bidValue) AS maxBidValue " +
+                "FROM dbaste.bids AS b " +
+                "WHERE b.idAuction IN ( " +
+                "SELECT idAuction " +
+                "FROM dbaste.bids " +
+                "WHERE userMail = ? " +
+                ") " +
+                "GROUP BY b.idAuction " +
+                ") AS maxBids ON a.idAuction = maxBids.idAuction " +
+                "WHERE a.expirationDateTime <= CURRENT_TIMESTAMP() " +
+                "AND a.userMail != ? " +
+                "AND a.idAuction IN ( " +
+                "SELECT idAuction " +
+                "FROM dbaste.bids " +
+                "WHERE userMail = ? " +
+                "AND bidValue = maxBids.maxBidValue " +
+                ") " +
+                "ORDER BY a.expirationDateTime ASC";
+
+        try (PreparedStatement pStatement = connection.prepareStatement(query)) {
+            pStatement.setString(1, userMail);
+            pStatement.setString(2, userMail);
+            pStatement.setString(3, userMail);
+            ResultSet result = pStatement.executeQuery();
+
+            while (result.next()) {
+                Auction auction = new Auction();
+                auction.setIdAuction(result.getInt("idAuction"));
+                auction.setInitialPrice(result.getFloat("initialPrice"));
+                auction.setMinRise(result.getFloat("minRise"));
+                auction.setExpirationDateTime(result.getTimestamp("expirationDateTime"));
+                auction.setUserMail(result.getString("userMail"));
+                auctions.add(auction);
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+
+        return auctions;
+    }
+
+    public ArrayList<Object> getAuctionClosedInfosForTable(Auction auction) throws SQLException{
+        if(isAuctionOpen(auction.getIdAuction())) return null;
+        //l'asta deve essere chiusa per poter calcolare i dati finali
+
+        ArrayList<Object> auctionClosedInfos = new ArrayList<>();
+        BidDAO bidDAO = new BidDAO(connection);
+        Bid maxBid = bidDAO.findMaxBidInAuction(auction.getIdAuction());
+
+        ArticleDAO articleDAO = new ArticleDAO(connection);
+        ArrayList<Article> articles = articleDAO.findArticlesListByIdAuction(auction.getIdAuction());
+
+        auctionClosedInfos.add(maxBid);
+        auctionClosedInfos.add(articles);
+
+        return auctionClosedInfos;
+    }
 
 }
