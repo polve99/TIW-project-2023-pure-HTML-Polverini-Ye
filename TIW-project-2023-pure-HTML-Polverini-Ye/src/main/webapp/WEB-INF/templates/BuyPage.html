@@ -11,7 +11,7 @@
     <h1>BidWars' Buy Page</h1>
     <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the open auctions!</h2>
 
-    <form action="GoToAuction" method="GET">
+    <form>
         <fieldset>
             <div class="container">
                 <div class="row">
@@ -55,7 +55,7 @@
 
     <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the closed auctions you won!</h2>
 
-    <form action="GoToWonAuctions" method="GET">
+    <form>
         <fieldset>
             <div class="container">
                 <div class="row">
