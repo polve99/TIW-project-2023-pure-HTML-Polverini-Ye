@@ -11,7 +11,7 @@
     <h1>BidWars' Buy Page</h1>
     <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the open auctions!</h2>
 
-    <form action="GoToBuy" method="GET">
+    <form action="GoToAuction" method="GET">
         <fieldset>
             <div class="container">
                 <div class="row">
@@ -29,7 +29,10 @@
                         </thead>
                         <tbody>
                             <tr th:each="auctionInfo : ${auctionInfoListOpen}">
-                                <td th:text="${auctionInfo['idAuction']}"></td>
+                                <td>
+                                	<a th:href="@{/GoToAuction(idAuction=${auctionInfo['idAuction']})}" th:text="${auctionInfo['idAuction']}"></a>
+                                	
+                                </td>
                                 <td>
                                     <ul>
                                         <li th:each="article : ${auctionInfo['articles']}" th:text="${article.articleName}"></li>

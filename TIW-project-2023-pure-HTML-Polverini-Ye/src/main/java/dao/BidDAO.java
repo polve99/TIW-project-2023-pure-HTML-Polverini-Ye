@@ -198,7 +198,6 @@ public class BidDAO {
         return bid;
     }
 
-
     public ArrayList<Bid> getBidsListInDescOrder() throws SQLException {
         ArrayList<Bid> orderedBids = new ArrayList<Bid>();
         String query = "SELECT * FROM dbaste.bids ORDER BY bidValue DESC";
