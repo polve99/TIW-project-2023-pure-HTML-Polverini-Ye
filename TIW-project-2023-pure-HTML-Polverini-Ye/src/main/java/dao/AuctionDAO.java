@@ -145,16 +145,17 @@ public class AuctionDAO {
         return auctions;
     }
 
-    public ArrayList<Auction> findAuctionsListByWordSearch(String word) throws SQLException{
+    public ArrayList<Auction> findAuctionsListByWordSearch(String word) throws SQLException {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         ArrayList<Auction> auctions = new ArrayList<Auction>();
-        String query = "SELECT * FROM dbaste.auctions JOIN articles " +
-        	    "ON auctions.idAuction = articles.idAuction " +
-        	    "WHERE (articles.name LIKE ? OR articles.description LIKE ?) AND expirationDateTime > ? " +
-        	    "ORDER BY expirationDateTime ASC";
+        String query = "SELECT * FROM dbaste.auctions " +
+                "JOIN dbaste.articles ON dbaste.auctions.idAuction = dbaste.articles.idAuction " +
+                "WHERE (dbaste.articles.articleName LIKE ? OR dbaste.articles.articleDescription LIKE ?) " +
+                "AND dbaste.auctions.expirationDateTime > ? " +
+                "ORDER BY dbaste.auctions.expirationDateTime ASC";
         PreparedStatement pStatement = null;
 
-        try{
+        try {
             pStatement = connection.prepareStatement(query);
             pStatement.setString(1, "%" + word + "%");
             pStatement.setString(2, "%" + word + "%");
@@ -170,14 +171,14 @@ public class AuctionDAO {
                 auction.setUserMail(result.getString("userMail"));
                 auctions.add(auction);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             throw new SQLException(e);
         } finally {
-            try{
-                if (pStatement != null){
+            try {
+                if (pStatement != null) {
                     pStatement.close();
                 }
-            } catch (Exception e2){
+            } catch (Exception e2) {
                 throw new SQLException(e2);
             }
         }

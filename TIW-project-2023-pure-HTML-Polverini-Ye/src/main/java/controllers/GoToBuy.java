@@ -69,7 +69,6 @@ public class GoToBuy extends HttpServlet {
         try {
             if (keyword != null && !keyword.isBlank()) {
                 auctionListOpen = auctionDAO.findAuctionsListByWordSearch(keyword);
-                //TODO: ancora non funziona ma va nel catch
             } else {
                 auctionListOpen = auctionDAO.getAllOpenAuctions();
             }
