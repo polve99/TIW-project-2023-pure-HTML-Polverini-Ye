@@ -65,11 +65,11 @@ public class GoToBuy extends HttpServlet {
         String keyword = request.getParameter("keyword");
 
         List<Auction> auctionListOpen = new ArrayList<>();
-        AuctionDAO auctionDAO = new AuctionDAO(connection);
 
         try {
             if (keyword != null && !keyword.isBlank()) {
                 auctionListOpen = auctionDAO.findAuctionsListByWordSearch(keyword);
+                //TODO: ancora non funziona ma va nel catch
             } else {
                 auctionListOpen = auctionDAO.getAllOpenAuctions();
             }
@@ -97,11 +97,10 @@ public class GoToBuy extends HttpServlet {
             Timestamp expirationDateTime = auction.getExpirationDateTime();
 
             Map<String, Object> auctionInfo = new HashMap<>();
-            auctionInfo.put("auctionId", auction.getIdAuction());
+            auctionInfo.put("idAuction", auction.getIdAuction());
             auctionInfo.put("articles", articles);
-            auctionInfo.put("maxBid", maxBid != null ? maxBid.getBidValue() : null); // Imposta il valore bidValue
-
-            auctionInfo.put("expirationDateTime", expirationDateTime);
+            auctionInfo.put("maxBid", maxBid != null ? maxBid.getBidValue() : null);
+            auctionInfo.put("timeLeftFormatted", formatTimeLeft(expirationDateTime));
 
             auctionInfoList.add(auctionInfo);
         }
@@ -122,6 +121,21 @@ public class GoToBuy extends HttpServlet {
         ctx.setVariable("user", user.getName());
 
         templateEngine.process(path, ctx, response.getWriter());
+    }
+
+    private String formatTimeLeft(Timestamp expirationDateTime) {
+        long timeLeftMillis = expirationDateTime.getTime() - System.currentTimeMillis();
+
+        // Conversione del tempo rimanente in giorni, ore, minuti e secondi
+        long seconds = timeLeftMillis / 1000;
+        long days = seconds / (24 * 60 * 60);
+        seconds %= (24 * 60 * 60);
+        long hours = seconds / (60 * 60);
+        seconds %= (60 * 60);
+        long minutes = seconds / 60;
+        seconds %= 60;
+
+        return String.format("%d days, %02d:%02d:%02d", days, hours, minutes, seconds);
     }
 
     @Override

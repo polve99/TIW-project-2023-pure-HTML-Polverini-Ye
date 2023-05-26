@@ -49,45 +49,7 @@ public class GoToAuction extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String auctionIdParam = request.getParameter("auctionId");
-        int auctionId = Integer.parseInt(auctionIdParam);
-
-        try {
-            Auction auction = auctionDAO.findAuctionByIdAuction(auctionId);
-
-            if (auction != null) {
-                List<Article> articles = articleDAO.findArticlesListByIdAuction(auctionId);
-                Bid maxBid = bidDAO.findMaxBidInAuction(auctionId);
-                long timeLeftMillis = auction.getExpirationDateTime().getTime() - System.currentTimeMillis();
-
-                // Conversione del tempo rimanente in giorni, ore, minuti e secondi
-                long seconds = timeLeftMillis / 1000;
-                long days = seconds / (24 * 60 * 60);
-                seconds %= (24 * 60 * 60);
-                long hours = seconds / (60 * 60);
-                seconds %= (60 * 60);
-                long minutes = seconds / 60;
-                seconds %= 60;
-
-                String timeLeftFormatted = String.format("%d days, %02d:%02d:%02d", days, hours, minutes, seconds);
-
-                Map<String, Object> auctionInfo = new HashMap<>();
-                auctionInfo.put("idAuction", auction.getIdAuction());
-                auctionInfo.put("articles", articles);
-                auctionInfo.put("maxBid", maxBid != null ? maxBid.getBidValue() : "No bids yet");
-                auctionInfo.put("timeLeft", timeLeftFormatted);
-
-                request.setAttribute("auctionInfo", auctionInfo);
-
-                // Non viene richiamato il motore del template Thymeleaf
-
-            } else {
-                // Auction not found
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Auction not found");
-            }
-        } catch (SQLException e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
-        }
+        //TODO questa pagina serve poi quando cliccando su una idAuction dalla pagina di BuyPAge deve rimandare alla pagina delle info di Auction
     }
 
     @Override

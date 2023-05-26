@@ -18,30 +18,30 @@
                     <h1>List of open auctions</h1>
                     <p th:text="${NoAuctionsMsg}"></p>
 
-					<table class="table">
-					    <thead>
-					        <tr>
-					            <th>Auction Code</th>
-					            <th>Articles</th>
-					            <th>Max Bid</th>
-					            <th>Time Remaining</th>
-					        </tr>
-					    </thead>
-					    <tbody>
-					    <tr th:each="auctionInfo : ${auctionInfoList}">
-					        <td th:text="${auctionInfo.auctionId}"></td>
-					        <td>
-					            <ul>
-					                <li th:each="article : ${auctionInfo.articles}" th:text="${article.articleName}"></li>
-					            </ul>
-					        </td>
-					        <td th:text="${auctionInfo.maxBid}"></td>
-					        <td th:text="${auctionInfo.expirationDateTime}"></td>
-					    </tr>
-					</tbody>
-
-					</table>
-
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Auction Id</th>
+								<th>Articles</th>
+								<th>Max Bid</th>
+								<th>Time Left</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="auctionInfo : ${auctionInfoList}">
+                                <td th:text="${auctionInfo['idAuction']}"></td>
+                                <td>
+                                    <ul>
+                                        <li th:each="article : ${auctionInfo['articles']}" th:text="${article['articleName']}"></li>
+                                    </ul>
+                                </td>
+                                <td th:text="${auctionInfo['maxBid']}"></td>
+                                <td>
+                                    <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </fieldset>
