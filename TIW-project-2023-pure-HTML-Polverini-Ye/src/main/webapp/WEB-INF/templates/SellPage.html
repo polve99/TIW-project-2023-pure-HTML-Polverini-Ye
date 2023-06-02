@@ -1,42 +1,146 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:lang="${session.lenguage}">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Sell Page</title>
-<link rel="stylesheet" type="text/css" media="all"
-          href="../../CSS/mystyle.css" th:href="@{/CSS/mystyle.css}" />
+    <meta charset="UTF-8">
+    <title>Sell Page</title>
+    <link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css" />
 </head>
+
 <body>
-	<h1>BidWars' Sell Page</h1>
-	 <form action="GoToSell" method="POST">
+    <h1>BidWars' Sell Page</h1>
+    <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all your open auctions!</h2>
+
+    <form>
         <fieldset>
             <div class="container">
                 <div class="row">
                     <h1>List of your open auctions</h1>
-                    <table class="table table-striped">
+                    <!--  <p th:text="${auctionInfoListOpen.isEmpty() ? 'No open auctions available' : ''}"></p> -->
+                    <div th:if = "${auctionInfoListOpen.isEmpty()}">
+                    	<p th:text = "${NoOpenAuctionsMsg}"></p>                    
+                    </div>
+                    <div th:unless = "${auctionInfoListOpen.isEmpty()}">
+	                    <table th:else class="table">
+	                        <thead>
+	                            <tr>
+	                                <th>Auction Id</th>
+	                                <th>Articles</th>
+	                                <th>Max Bid</th>
+	                                <th>Time Left</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <tr th:each="auctionInfo : ${auctionInfoListOpen}">
+	                                <td>
+	                                	<a th:href="@{/GoToAuction(idAuction=${auctionInfo['idAuction']})}" th:text="${auctionInfo['idAuction']}"></a>
+	                                	
+	                                </td>
+	                                <td>
+	                                    <ul>
+	                                        <li th:each="article : ${auctionInfo['articles']}" th:text="${article.articleName}"></li>
+	                                    </ul>
+	                                </td>
+	                                <td th:text="${auctionInfo['maxBid']}"></td>
+	                                <td>
+	                                    <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
+	                                </td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <p th:class="error" th:text="${errorMsg}"></p>
+    </form>
+
+    <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all your closed auctions</h2>
+
+    <form>
+        <fieldset>
+            <div class="container">
+                <div class="row">
+                    <h1>List of your closed auctions</h1>
+                    <p th:text="${auctionInfoListWon.isEmpty() ? 'You haven\'t won any auctions.' : ''}"></p>
+                    <div>
+                    	<p th:text = "${NoWonAuctionsMsg}"></p>
+                    </div>
+
+                    <table class="table">
                         <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Name</th>
-                            <th>Max offer</th>
-                            <th>Time left</th>
-                        </tr>
+                            <tr>
+                                <th>Auction Id</th>
+                                <th>Articles</th>
+                                <th>Winning bid</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="auction : ${auctions}">
-                            <td th:text="${auction.code}"></td>
-                            <td th:text="${auction.name}"></td>
-                            <td th:text="${auction.maxOffer}"></td>
-                            <td th:text="${auction.timeLeft}"></td>
-                            <td><a th:href="@{GoToAuction(code=${auction.code})}">Go to auction</a></td>
-                        </tr>
+                            <tr th:if="${auctionInfoListWon.isEmpty()}">
+                                <td colspan="3">You haven't won any auctions.</td>
+                            </tr>
+                            <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
+                                <td th:text="${auctionInfoListWon['idAuction']}"></td>
+                                <td>
+                                    <ul>
+                                        <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>
+                                    </ul>
+                                </td>
+                                <td th:text="${auctionInfoListWon['maxBid']}"></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </fieldset>
-    <p th:class="error" th:text=" ${errorMsg}"></p>
     </form>
+    
+    <form action = "AddArticle" method = "POST" enctype="multipart/form-data">
+    	<h2>Do you want to add an article?<br>here's a form for adding articles for your future auctions</h2>
+    	<fieldset>
+		   	<label for="articleName">Enter the Article Name:</label>
+		   	<input type="text" maxlength="20" name="articleName" id ="articleName" required>
+		   	<br>
+		    <label for="articleDesc">Enter the Article Description:</label>
+		   	<!--<textarea rows="5" cols="51" name="articleDesc"></textarea> -->
+		   	<input type="text" maxlength="255" name="articleDesc" id ="articleDesc">
+		   	<br>
+		   	<label for="price">Enter the Price:</label>
+		    <input type="number" name="price" id="price" step="1" min="0" required>
+		    <br>
+		   	<input type="file" name="imageToUpload" id="imageToUpload" accept=".jpeg, .jpg, .png" required>
+		   	<p><input type="submit" value="AddArticle" /></p>
+    	</fieldset>
+    </form>
+    
+
+	<form action="CreateAuction" method="POST">
+	    <h2>Do you want to create an auction?</h2>
+	    <fieldset>
+	        <label for="expirationDate">Select how long you want the Auction to last (min 1, max 20):</label>
+	        <!--<input type="date" id="expirationDate" name="expirationDate"> -->
+	        <input type="number" name = "expirationDate" id = "expirationDate" step = "1" min ="1" max = "20" required>
+	        <br>
+	        <label for="minRise">Select a Minimun Rise</label>
+	        <input type="number" name="price" id="price" step="1" min="1" required>
+	        <label for="imageSelect">Select one or more Articles:</label>
+	        <div>
+		        <div th:each="image : ${imageList}">
+		        	<p th:text="@{'/images/'+${image}}"></p>
+		            <label th:for="${'image-' + image}">
+		                <input type="checkbox" th:id="${'image-' + image}" th:name="selectedImages" th:value="${image}">
+		                <img th:src="@{'/images/' + ${image}}" th:alt="${'Immagine ' + image}" width="300" height="200">
+		            </label>
+		        </div>
+	        </div>
+	        <input type="submit" value="CreateAuction">
+	    </fieldset>
+	</form>
+
+    <div>
+        <a href="/Logout" th:href="@{/Logout}">Logout</a>
+    </div>
 
 </body>
+
 </html>

@@ -16,20 +16,25 @@ public class AuctionDAO {
         this.connection = connection;
     }
 
-    public boolean createAuction(int idAuction, float initialPrice, float minRise, String expirationDateTime, String userMail) throws SQLException {
-        if (isAuctionInDB(idAuction)) return false;
+    public int createAuction(float initialPrice, float minRise, Timestamp expirationDateTime, String userMail) throws SQLException {
+        //if (isAuctionInDB(idAuction)) return false;
 
-        String query = "INSERT INTO dbaste.auctions (idAuction, initialPrice, minRise, expirationDateTime, userMail) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO dbaste.auctions (initialPrice, minRise, expirationDateTime, userMail) VALUES (?, ?, ?, ?)";
         PreparedStatement pStatement = null;
+        ResultSet keys = null;
 
         try {
             pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, idAuction);
-            pStatement.setFloat(2, initialPrice);
-            pStatement.setFloat(3, minRise);
-            pStatement.setString(4, expirationDateTime);
-            pStatement.setString(5, userMail);
+            pStatement.setFloat(1, initialPrice);
+            pStatement.setFloat(2, minRise);
+            pStatement.setTimestamp(3, expirationDateTime);
+            pStatement.setString(4, userMail);
             pStatement.executeUpdate();
+            keys = pStatement.getGeneratedKeys();
+			boolean auctionCreated = keys.next();
+			if (!auctionCreated) {
+				return 0;
+			}
         } catch (SQLException e) {
             throw new SQLException(e);
         } finally {
@@ -41,7 +46,7 @@ public class AuctionDAO {
                 throw new SQLException(e2);
             }
         }
-        return true;
+        return  keys.getInt(1);
     }
 
     public boolean addArticleInAuction(int idAuction, int articleCode) throws SQLException{

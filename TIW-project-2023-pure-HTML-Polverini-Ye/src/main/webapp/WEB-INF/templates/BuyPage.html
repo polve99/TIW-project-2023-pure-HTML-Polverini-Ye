@@ -49,7 +49,7 @@
             </div>
         </fieldset>
         <p th:class="error" th:text="${errorMsg}"></p>
-        <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword" required /></p>
+        <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword"/></p>
         <p><input type="submit" value="Search" /></p>
     </form>
 
@@ -91,7 +91,7 @@
     </form>
 
     <div>
-        <a href="/Logout">Logout</a>
+        <a href="/Logout" th:href="@{/Logout}">Logout</a>
     </div>
 
 </body>

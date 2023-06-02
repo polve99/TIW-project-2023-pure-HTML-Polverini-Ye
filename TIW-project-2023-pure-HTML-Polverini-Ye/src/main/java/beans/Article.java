@@ -5,21 +5,22 @@ public class Article {
     private int articleCode;
     private String articleName;
     private String articleDescription;
-    private String image; //image contiene il percorso di file dell'immagine associata all'articolo.
-    // Quando si crea o si modifica un articolo, è possibile caricare un'immagine dal file system e salvare il percorso del file come valore dell'attributo "image".
+    private String image; 
     private float articlePrice;
     private int idAuction;
+    private String userMail;
 
     public Article() {
     }
 
-    public Article(int articleCode, String articleName, String articleDescription, String image, float articlePrice, int idAuction) {
+    public Article(int articleCode, String articleName, String articleDescription, String image, float articlePrice, String userMail) {
         this.articleCode = articleCode;
         this.articleName = articleName;
         this.articleDescription = articleDescription;
         this.image = image;
         this.articlePrice = articlePrice;
-        this.idAuction = idAuction;
+        //this.idAuction = idAuction;
+        this.userMail = userMail;
     }
 
     public int getArticleCode() {
@@ -62,6 +63,12 @@ public class Article {
     }
     public void setIdAuction(int idAuction) {
         this.idAuction = idAuction;
+    }
+    public String getUserMail() {
+        return userMail;
+    }
+    public void setUserMail(String userMail) {
+    	this.userMail = userMail;
     }
 
 }

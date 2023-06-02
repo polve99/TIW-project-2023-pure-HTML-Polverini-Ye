@@ -18,18 +18,17 @@ public class ArticleDAO {
     }
 
     //TODO: da sostituire poi con createArticle quando ho capito come funzionano le image_path
-    public boolean createArticle(int articleCode, String articleName, String articleDescription, String image, float articlePrice, int idAuction) throws SQLException{
-        String query = "INSERT INTO dbaste.articles (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
+    public boolean createArticle(String articleName, String articleDescription, float articlePrice, String image, String userMail) throws SQLException{
+        String query = "INSERT INTO dbaste.articles (articleName, articleDescription, image, articlePrice, userMail) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement pStatement = null;
 
         try{
             pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, articleCode);
-            pStatement.setString(2, articleName);
-            pStatement.setString(3, articleDescription);
-            pStatement.setString(4, image);
-            pStatement.setFloat(5, articlePrice);
-            pStatement.setInt(6, idAuction);
+            pStatement.setString(1, articleName);
+            pStatement.setString(2, articleDescription);
+            pStatement.setString(3, image);
+            pStatement.setFloat(4, articlePrice);
+            pStatement.setString(5, userMail);
             pStatement.executeUpdate();
         } catch (SQLException e){
             throw new SQLException(e);
@@ -62,23 +61,24 @@ public class ArticleDAO {
 
         // salvataggio dell'articolo nel database
         String query = "INSERT INTO dbaste.articles (articleCode, articleName, articleDescription, image, articlePrice, idAuction) VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement statement = null;
+        PreparedStatement pStatement = null;
 
         try {
-            statement = connection.prepareStatement(query);
-            statement.setInt(1, article.getArticleCode());
-            statement.setString(2, article.getArticleName());
-            statement.setString(3, article.getArticleDescription());
-            statement.setString(4, article.getImage());
-            statement.setFloat(5, article.getArticlePrice());
-            statement.setInt(6, article.getIdAuction());
-            statement.executeUpdate();
+            pStatement = connection.prepareStatement(query);
+            pStatement.setInt(1, article.getArticleCode());
+            pStatement.setString(2, article.getArticleName());
+            pStatement.setString(3, article.getArticleDescription());
+            pStatement.setString(4, article.getImage());
+            pStatement.setFloat(5, article.getArticlePrice());
+            pStatement.setInt(6, article.getIdAuction());
+            pStatement.setString(7, article.getUserMail());
+            pStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error saving article", e);
         } finally {
             try {
-                if (statement != null) {
-                    statement.close();
+                if (pStatement != null) {
+                    pStatement.close();
                 }
             } catch (Exception e2) {
                 throw new SQLException("Error closing statement", e2);
@@ -109,7 +109,7 @@ public class ArticleDAO {
     }
 
     public boolean updateArticle(Article article) throws SQLException {
-        String query = "UPDATE dbaste.articles SET articleName = ?, articleDescription = ?, image = ?, articlePrice = ?, idAuction = ? WHERE articleCode = ?";
+        String query = "UPDATE dbaste.articles SET articleName = ?, articleDescription = ?, image = ?, articlePrice = ?, idAuction = ?, userMail = ? WHERE articleCode = ?";
         PreparedStatement pStatement = null;
 
         try {
@@ -120,6 +120,7 @@ public class ArticleDAO {
             pStatement.setFloat(4, article.getArticlePrice());
             pStatement.setInt(5, article.getIdAuction());
             pStatement.setInt(6, article.getArticleCode());
+            pStatement.setString(7, article.getUserMail());
             pStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -154,6 +155,7 @@ public class ArticleDAO {
                 article.setImage(resultSet.getString("image"));
                 article.setArticlePrice(resultSet.getFloat("articlePrice"));
                 article.setIdAuction(resultSet.getInt("idAuction"));
+                article.setUserMail(resultSet.getString("userMail"));
             }
         } catch (SQLException e) {
             throw new SQLException(e);
@@ -195,6 +197,7 @@ public class ArticleDAO {
                 article.setImage(resultSet.getString("image"));
                 article.setArticlePrice(resultSet.getFloat("articlePrice"));
                 article.setIdAuction(resultSet.getInt("idAuction"));
+                article.setUserMail(resultSet.getString("userMail"));
                 articles.add(article);
             }
         } catch (SQLException e) {
@@ -216,6 +219,83 @@ public class ArticleDAO {
             }
         }
         return articles;
+    }
+    
+    public ArrayList<String> findImagesByUser (String userMail) throws SQLException {
+    	ArrayList<String> images = new ArrayList<String>();
+    	String query = "SELECT image FROM dbaste.articles WHERE userMail = ? AND idAuction IS NULL";
+    	 ResultSet resultSet = null;
+         PreparedStatement pStatement = null;
+         try {
+             pStatement = connection.prepareStatement(query);
+             pStatement.setString(1, userMail);
+             resultSet = pStatement.executeQuery();
+
+             while (resultSet.next()) {
+                 images.add(resultSet.getString("image"));
+             }
+         } catch (SQLException e) {
+             throw new SQLException(e);
+         } finally {
+             try {
+                 if (resultSet != null) {
+                     resultSet.close();
+                 }
+             } catch (Exception e1) {
+                 throw new SQLException(e1);
+             }
+             try {
+                 if (pStatement != null) {
+                     pStatement.close();
+                 }
+             } catch (Exception e2) {
+                 throw new SQLException(e2);
+             }
+         }
+         return images;
+    }
+    
+    public Article findArticleByImage(String image) throws SQLException {
+    	String query = "SELECT * FROM dbaste.articles WHERE image = ?";
+    	Article article = null;
+    	ResultSet resultSet = null;
+        PreparedStatement pStatement = null;
+        try {
+            pStatement = connection.prepareStatement(query);
+            pStatement.setString(1, image);
+            resultSet = pStatement.executeQuery();
+            
+            //System.out.println(resultSet.getInt("articleCode"));
+            //TODO: sistemare e capire perchè si blocca qua
+            int articleCode = resultSet.getInt("articleCode");
+            String articleName = resultSet.getString("articleName");
+            String articleDesc = resultSet.getString("articleDescription");
+            String img = resultSet.getString("image");
+            float artPrice = resultSet.getFloat("articlePrice");
+            String userMail = resultSet.getString("userMail");
+            
+            
+            article = new Article(articleCode,articleName,articleDesc,img,artPrice,userMail);
+            
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (Exception e1) {
+                throw new SQLException(e1);
+            }
+            try {
+                if (pStatement != null) {
+                    pStatement.close();
+                }
+            } catch (Exception e2) {
+                throw new SQLException(e2);
+            }
+        }
+        return article;
     }
 
 }

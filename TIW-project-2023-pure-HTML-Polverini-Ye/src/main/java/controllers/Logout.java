@@ -21,11 +21,12 @@ public class Logout extends HttpServlet{
         //Invalidate session
         if (session != null) {
             session.invalidate();
+            response.sendRedirect("GoToHomePage");
+            return;
         }
 
         //Redirect to the login page
-        String path = getServletContext().getContextPath() +  "/login.html";
-        response.sendRedirect(path);
+        String path = getServletContext().getContextPath() +  "GoToHomePage";
+        response.sendRedirect("GoToHomePage");
     }
-
 }
