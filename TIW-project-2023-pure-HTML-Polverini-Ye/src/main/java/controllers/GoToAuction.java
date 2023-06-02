@@ -75,11 +75,13 @@ public class GoToAuction extends HttpServlet {
 
         Auction auction;
         List<Article> articles;
+        Bid maxBid;
         List<Bid> bids;
 
         try {
             auction = auctionDAO.findAuctionByIdAuction(idAuction);
             articles = articleDAO.findArticlesListByIdAuction(idAuction);
+            maxBid = bidDAO.findMaxBidInAuction(idAuction);
             bids = bidDAO.findBidsListByIdAuction(idAuction);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -102,14 +104,13 @@ public class GoToAuction extends HttpServlet {
         templateVariables.put("user", user);
         templateVariables.put("auction", auction);
         templateVariables.put("articles", articles);
+        templateVariables.put("maxBid", maxBid);
         templateVariables.put("bids", bids);
         templateVariables.put("timeLeftFormatted", formatTimeLeft(auction.getExpirationDateTime()));
 
         if (isAuctionOpen) {
-            // Auction is still open
             template = "OpenAuctionPage.html";
         } else {
-            // Auction is closed
             template = "ClosedAuctionPage.html";
         }
 
