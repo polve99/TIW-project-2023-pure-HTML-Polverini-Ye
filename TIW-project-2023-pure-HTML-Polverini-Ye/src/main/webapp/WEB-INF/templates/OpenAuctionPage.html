@@ -10,95 +10,86 @@
 <body>
 	<h1>BidWars' Open Auction Page</h1>
 	<h2>Hi <span th:text="${user.name}"></span>, here are the details of the open auction '<span th:text="${session.idAuction}"></span>', you are looking at:</h2>
-
+	
 	<fieldset>
-  	<div class="container">
-    	<div class="row">
-      		<h1>Open Auction Details</h1>
-      		<table class="table">
-        		<thead>
-        			<tr>
+		<div class="container">
+			<div class="row">
+				<h1>Open Auction Details</h1>
+				<table class="table">
+				<thead>
+			        <tr>
 						<th>Auction ID</th>
-					    <th>Articles</th>
+				        <th>Articles</th>
 				        <th>Highest Bidder</th>
 				        <th>Highest Bid</th>
 				        <th>Time Left</th>
-        			</tr>
-        		</thead>
-		        <tbody>
+			        </tr>
+	        	</thead>
+	        	<tbody>
 			        <tr>
-			          	<td th:text="${auction.idAuction}"></td>
+						<td th:text="${auction.idAuction}"></td>
 			          	<td>
-				            <ul>
-				              	<li th:each="article : ${articles}" th:text="${article.articleName}"></li>
-				            </ul>
+			            	<ul>
+			              		<li th:each="article : ${articles}" th:text="${article.articleName}"></li>
+			            	</ul>
 			          	</td>
 			          	<td th:text="${maxBid.userMail}"></td>
 			          	<td th:text="${maxBid.bidValue}"></td>
 			          	<td th:text="${timeLeftFormatted}"></td>
 			        </tr>
-		        </tbody>
-			</table>
-		</div>
-	</div>
+	        	</tbody>
+	      		</table>
+	      	</div>
+	  	</div>
 	</fieldset>
 
 	<fieldset>
-		  <div class="container">
-			    <div class="row">
-				      <h1>Bid History</h1>
-				      <div th:if = "${bids.isEmpty()}">
-				        	<p th:text = "${NoBidsMsg}"></p>
-				      </div>
-				      <div th:unless = "${bids.isEmpty()}">
-					        <table class="table">
-						          <thead>
-							          <tr>
-								            <th>IdBid</th>
-								            <th>User</th>
-								            <th>Bid Offer</th>
-								            <th>Date Time</th>
-							          </tr>
-						          </thead>
-						          <tbody>
-							          <tr th:each="bid : ${bids}">
-								            <td th:text="${bid.idBid}"></td>
-								            <td th:text="${bid.userMail}"></td>
-								            <td th:text="${bid.bidValue}"></td>
-								            <td th:text="${bid.bidDateTime}"></td>
-							          </tr>
-						          </tbody>
-					        </table>
-				      </div>
-			    </div>
-		  </div>
+	  	<div class="container">
+		    <div class="row">
+		      	<h1>Bid History</h1>
+		      	<div th:if = "${bids.isEmpty()}">
+		    		<p th:text = "${NoBidsMsg}"></p>
+		      	</div>
+		      	<div th:unless = "${bids.isEmpty()}">
+		        	<table class="table">
+		          		<thead>
+		          			<tr>
+		            			<th>IdBid</th>
+		            			<th>User</th>
+		            			<th>Bid Offer</th>
+		            			<th>Date Time</th>
+		          			</tr>
+		          		</thead>
+		          		<tbody>
+				          	<tr th:each="bid : ${bids}">
+				            	<td th:text="${bid.idBid}"></td>
+				            	<td th:text="${bid.userMail}"></td>
+				            	<td th:text="${bid.bidValue}"></td>
+				            	<td th:text="${bid.bidDateTime}"></td>
+				          	</tr>
+		          		</tbody>
+		        	</table>
+		      	</div>
+			</div>
+	  	</div>
 	</fieldset>
 	
-	<div th:if="${session.bidCreated}">
-    <p>Bid created successfully!</p>
-    <!-- Rimuovi il flag 'bidCreated' dalla sessione -->
-    <script th:inline="javascript">
-      /*<![CDATA[*/
-      window.onload = function() {
-        /* Rimuovi il flag 'bidCreated' dalla sessione */
-        sessionStorage.removeItem('bidCreated');
-      };
-      /*]]>*/
-    </script>
-  </div>
+	<div>
+	  	<h1>Place a Bid</h1>
+	  	<form action="MakeBid" method="POST">
+		    <input type="hidden" name="idAuction" th:value="${auction.idAuction}" />
+		    <label for="bidValue">Bid Value:</label>
+		    <input type="number" id="bidValue" name="bidValue" required />
+		    <button type="submit">Place Bid</button>
+	  	</form>
+	</div>
+
+	<div th:if="${msgBid != null}">
+	  	<p th:text="${msgBid}"></p>
+	</div>
 
 	<div>
-		<h1>Place a Bid</h1>
-		<form action="MakeBid" method="POST">
-			<input type="hidden" name="idAuction" th:value="${auction.idAuction}" />
-			<label for="bidValue">Bid Value:</label>
-			<input type="number" id="bidValue" name="bidValue" required />
-			<button type="submit">Place Bid</button>
-		</form>
-	</div>
-	
-	<div>
-		<a href="/Logout">Logout</a>
+	  	<a href="/Logout">Logout</a>
 	</div>
 
 </body>

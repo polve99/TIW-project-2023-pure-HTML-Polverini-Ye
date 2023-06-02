@@ -1,9 +1,11 @@
 package controllers;
 
+import beans.Auction;
+import beans.Bid;
 import beans.User;
+import dao.AuctionDAO;
 import dao.BidDAO;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import utilis.ConnectionHandler;
 import utilis.ThymeleafTemplateEngineCreator;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpSession;
 public class MakeBid extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
+    private TemplateEngine templateEngine = null;
 
     public MakeBid() {
         super();
@@ -33,36 +36,58 @@ public class MakeBid extends HttpServlet {
     public void init() throws ServletException {
         connection = ConnectionHandler.getConnection(getServletContext());
         ServletContext servletContext = getServletContext();
+        templateEngine = ThymeleafTemplateEngineCreator.getTemplateEngine(servletContext);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
+            request.setAttribute("msgBid", "You must be logged in to make a bid");
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
+        boolean isValid = true;
+
         int idAuction = (int) session.getAttribute("idAuction");
         User user = (User) session.getAttribute("user");
-
-        int bidValue = Integer.parseInt(request.getParameter("bidValue"));
+        if(request.getParameter("bidValue") == null || request.getParameter("bidValue").isEmpty() ){
+            isValid = false;
+            request.setAttribute("msgBid", "Bid value null or empty");
+        }
+        float bidValue = Float.parseFloat(request.getParameter("bidValue"));
         String userMail = user.getUserMail();
 
         BidDAO bidDAO = new BidDAO(connection);
+        AuctionDAO auctionDAO = new AuctionDAO(connection);
 
-        try {
-            bidDAO.createBid(bidValue, userMail, idAuction);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not possible to create the bid requested.");
-            return;
+        if(bidValue <= 0){
+            request.setAttribute("msgBid", "Bid value must be greater than 0");
+        } else {
+            try {
+                Auction auction = auctionDAO.findAuctionByIdAuction(idAuction);
+                float minRise = auction.getMinRise();
+                Bid maxBid = bidDAO.findMaxBidInAuction(idAuction);
+                float maxBidValue = maxBid.getBidValue();
+                if(bidValue < maxBidValue + minRise) {
+                    isValid = false;
+                    request.setAttribute("msgBid", "Bid value too low (must be greater than the current bid value (" + maxBidValue + ") + min rise (" + minRise + "))");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                request.setAttribute("msgBid", "Error in db, bid not created. Please retry.");
+            }
+            if(isValid){
+                try {
+                    bidDAO.createBid(bidValue, userMail, idAuction);
+                    request.setAttribute("msgBid", "Bid successfully created!");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    request.setAttribute("msgBid", "Error in db, bid not created. Please retry.");
+                }
+            }
         }
 
-        // Assuming you have successfully created the bid, you can store a flag in the session
-        request.getSession().setAttribute("bidCreated", true);
-
-        // Redirect to the OpenAuctionPage servlet
-        response.sendRedirect("GoToAuction?idAuction=" + idAuction);
+        request.getRequestDispatcher("/GoToAuction").forward(request, response);
     }
 }

@@ -128,9 +128,14 @@ public class GoToAuction extends HttpServlet {
 
         WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
         ctx.setVariables(templateVariables);
-        
+
         if(bids.isEmpty()){
             ctx.setVariable("NoBidsMsg", "There are no bids at this time for this auction.");
+        }
+        
+        String msgBid = (String) request.getAttribute("msgBid");
+        if (msgBid != null) {
+            ctx.setVariable("msgBid", msgBid);
         }
 
         String path = "/WEB-INF/templates/" + template;
