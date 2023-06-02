@@ -77,6 +77,7 @@ public class GoToAuction extends HttpServlet {
         List<Article> articles;
         Bid maxBid;
         List<Bid> bids;
+        List<Object> closedAuctionInfo = null;
 
         try {
             auction = auctionDAO.findAuctionByIdAuction(idAuction);
@@ -95,6 +96,16 @@ public class GoToAuction extends HttpServlet {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        if(!isAuctionOpen){
+            try{
+                closedAuctionInfo = auctionDAO.getAuctionClosedInfos(auction);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in retrieving closed auction info");
+                return;
+            }
+            request.setAttribute("closedAuctionInfo", closedAuctionInfo);
+        }
 
         // Salva l'ID dell'asta nella sessione
         session.setAttribute("idAuction", idAuction);
@@ -107,6 +118,7 @@ public class GoToAuction extends HttpServlet {
         templateVariables.put("maxBid", maxBid);
         templateVariables.put("bids", bids);
         templateVariables.put("timeLeftFormatted", formatTimeLeft(auction.getExpirationDateTime()));
+        if(closedAuctionInfo != null) templateVariables.put("closedAuctionInfo", closedAuctionInfo);
 
         if (isAuctionOpen) {
             template = "OpenAuctionPage.html";

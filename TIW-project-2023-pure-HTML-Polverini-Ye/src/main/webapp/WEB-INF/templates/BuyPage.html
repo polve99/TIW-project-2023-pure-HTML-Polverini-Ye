@@ -31,7 +31,6 @@
                             <tr th:each="auctionInfo : ${auctionInfoListOpen}">
                                 <td>
                                 	<a th:href="@{/GoToAuction(idAuction=${auctionInfo['idAuction']})}" th:text="${auctionInfo['idAuction']}"></a>
-                                	
                                 </td>
                                 <td>
                                     <ul>
@@ -75,7 +74,9 @@
                                 <td colspan="3">You haven't won any auctions.</td>
                             </tr>
                             <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
-                                <td th:text="${auctionInfoListWon['idAuction']}"></td>
+                                <td>
+                                	<a th:href="@{/GoToAuction(idAuction=${auctionInfoListWon['idAuction']})}" th:text="${auctionInfoListWon['idAuction']}"></a>
+                                </td>
                                 <td>
                                     <ul>
                                         <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>

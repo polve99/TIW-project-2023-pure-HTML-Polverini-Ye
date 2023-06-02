@@ -190,30 +190,6 @@ public class AuctionDAO {
         return auctions;
     }
 
-    public ArrayList<Object> getAuctionClosedInfos(Auction auction) throws SQLException{
-        if(isAuctionOpen(auction.getIdAuction())) return null;
-        //l'asta deve essere chiusa per poter calcolare i dati finali
-
-        ArrayList<Object> auctionClosedInfos = new ArrayList<>();
-
-        //calcola i dati finali dell'asta ogni volta che viene chiamato
-        BidDAO bidDAO = new BidDAO(connection);
-        Bid maxBid = bidDAO.findMaxBidInAuction(auction.getIdAuction());
-
-        float finalPrice = maxBid.getBidValue();
-        String winnerMail = maxBid.getUserMail();
-
-        UserDAO userDAO = new UserDAO(connection);
-        User winner = userDAO.findUserByUserMail(winnerMail);
-        String shippingAddress = winner.getAddress();
-
-        auctionClosedInfos.add(finalPrice);
-        auctionClosedInfos.add(winnerMail);
-        auctionClosedInfos.add(shippingAddress);
-
-        return auctionClosedInfos;
-    }
-
     private boolean isAuctionInDB(int idAuction) throws SQLException{
         String query = "SELECT * FROM dbaste.auctions WHERE idAuction = ?";
         PreparedStatement pStatement = null;
@@ -437,6 +413,30 @@ public class AuctionDAO {
 
         auctionClosedInfos.add(maxBid);
         auctionClosedInfos.add(articles);
+
+        return auctionClosedInfos;
+    }
+    
+    public ArrayList<Object> getAuctionClosedInfos(Auction auction) throws SQLException{
+        if(isAuctionOpen(auction.getIdAuction())) return null;
+        //l'asta deve essere chiusa per poter calcolare i dati finali
+
+        ArrayList<Object> auctionClosedInfos = new ArrayList<>();
+
+        //calcola i dati finali dell'asta ogni volta che viene chiamato
+        BidDAO bidDAO = new BidDAO(connection);
+        Bid maxBid = bidDAO.findMaxBidInAuction(auction.getIdAuction());
+
+        float finalPrice = maxBid.getBidValue();
+        String winnerMail = maxBid.getUserMail();
+
+        UserDAO userDAO = new UserDAO(connection);
+        User winner = userDAO.findUserByUserMail(winnerMail);
+        String shippingAddress = winner.getAddress();
+
+        auctionClosedInfos.add(finalPrice);
+        auctionClosedInfos.add(winnerMail);
+        auctionClosedInfos.add(shippingAddress);
 
         return auctionClosedInfos;
     }
