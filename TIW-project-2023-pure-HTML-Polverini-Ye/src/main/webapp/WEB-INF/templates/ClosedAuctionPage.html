@@ -8,42 +8,42 @@
 </head>
 
 <body>
-<h1>BidWars' Closed Auction Page</h1>
-<h2>Hi <span th:text="${user.name}"></span>, here are the details of the closed auction '<span th:text="${session.idAuction}"></span>', you are looking at:</h2>
-
-<fieldset>
-    <div class="container">
-        <div class="row">
-            <h1>Closed Auction Details</h1>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Articles</th>
-                    <th>Winning Bidder</th>
-                    <th>Winning Price</th>
-                    <th>Shipping Address</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <ul>
-                            <li th:each="article : ${articles}" th:text="${article.articleName}"></li>
-                        </ul>
-                    </td>
-                    <td th:text="${closedAuctionInfo[0]}"></td>
-                    <td th:text="${closedAuctionInfo[1]}"></td>
-                    <td th:text="${closedAuctionInfo[2]}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</fieldset>
-
-<div>
-    <a href="/Logout">Logout</a>
-</div>
+	<h1>BidWars' Closed Auction Page</h1>
+	<h2>Hi <span th:text="${user.name}"></span>, here are the details of the closed auction '<span th:text="${session.idAuction}"></span>', you are looking at:</h2>
+	
+	<fieldset>
+	    <div class="container">
+	        <div class="row">
+	            <h1>Closed Auction Details</h1>
+	            <table class="table">
+	                <thead>
+	                <tr>
+	                    <th>Articles</th>
+	                    <th>Winning Bidder</th>
+	                    <th>Winning Price</th>
+	                    <th>Shipping Address</th>
+	                </tr>
+	                </thead>
+	                <tbody>
+	                <tr>
+	                    <td>
+	                        <ul>
+	                            <li th:each="article : ${articles}" th:text="${article.articleName}"></li>
+	                        </ul>
+	                    </td>
+	                    <td th:text="${closedAuctionInfo[0]}"></td>
+	                    <td th:text="${closedAuctionInfo[1]}"></td>
+	                    <td th:text="${closedAuctionInfo[2]}"></td>
+	                </tr>
+	                </tbody>
+	            </table>
+	        </div>
+		</div>
+	</fieldset>
+	
+	<div>
+	    <a href="/Logout">Logout</a>
+	</div>
 
 </body>
 

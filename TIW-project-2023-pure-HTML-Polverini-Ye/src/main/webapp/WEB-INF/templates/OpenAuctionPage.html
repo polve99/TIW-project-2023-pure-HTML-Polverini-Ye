@@ -2,80 +2,85 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Open Auction Page</title>
-  <link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css" />
+	<meta charset="UTF-8">
+	<title>Open Auction Page</title>
+	<link rel="stylesheet" type="text/css" media="all" href="CSS/mystyle.css" />
 </head>
 
 <body>
-<h1>BidWars' Open Auction Page</h1>
-<h2>Hi <span th:text="${user.name}"></span>, here are the details of the open auction '<span th:text="${session.idAuction}"></span>', you are looking at:</h2>
+	<h1>BidWars' Open Auction Page</h1>
+	<h2>Hi <span th:text="${user.name}"></span>, here are the details of the open auction '<span th:text="${session.idAuction}"></span>', you are looking at:</h2>
 
-<fieldset>
-  <div class="container">
-    <div class="row">
-      <h1>Open Auction Details</h1>
-      <table class="table">
-        <thead>
-        <tr>
-          <th>Auction ID</th>
-          <th>Articles</th>
-          <th>Highest Bidder</th>
-          <th>Highest Bid</th>
-          <th>Time Left</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td th:text="${auction.idAuction}"></td>
-          <td>
-            <ul>
-              <li th:each="article : ${articles}" th:text="${article.articleName}"></li>
-            </ul>
-          </td>
-          <td th:text="${maxBid.userMail}"></td>
-          <td th:text="${maxBid.bidValue}"></td>
-          <td th:text="${timeLeftFormatted}"></td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</fieldset>
+	<fieldset>
+  	<div class="container">
+    	<div class="row">
+      		<h1>Open Auction Details</h1>
+      		<table class="table">
+        		<thead>
+        			<tr>
+						<th>Auction ID</th>
+					    <th>Articles</th>
+				        <th>Highest Bidder</th>
+				        <th>Highest Bid</th>
+				        <th>Time Left</th>
+        			</tr>
+        		</thead>
+		        <tbody>
+			        <tr>
+			          	<td th:text="${auction.idAuction}"></td>
+			          	<td>
+				            <ul>
+				              	<li th:each="article : ${articles}" th:text="${article.articleName}"></li>
+				            </ul>
+			          	</td>
+			          	<td th:text="${maxBid.userMail}"></td>
+			          	<td th:text="${maxBid.bidValue}"></td>
+			          	<td th:text="${timeLeftFormatted}"></td>
+			        </tr>
+		        </tbody>
+			</table>
+		</div>
+	</div>
+	</fieldset>
 
-<fieldset>
-  <div class="container">
-    <div class="row">
-      <h1>Bid History</h1>
-      <table class="table">
-        <thead>
-        <tr>
-          <th>IdBid</th>
-          <th>User</th>
-          <th>Bid Offer</th>
-          <th>Date Time</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="bid : ${bids}">
-          <td th:text="${bid.idBid}"></td>
-          <td th:text="${bid.userMail}"></td>
-          <td th:text="${bid.bidValue}"></td>
-          <td th:text="${bid.bidDateTime}"></td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</fieldset>
+	<fieldset>
+		  <div class="container">
+			    <div class="row">
+				      <h1>Bid History</h1>
+				      <div th:if = "${bids.isEmpty()}">
+				        	<p th:text = "${NoBidsMsg}"></p>
+				      </div>
+				      <div th:unless = "${bids.isEmpty()}">
+					        <table class="table">
+						          <thead>
+							          <tr>
+								            <th>IdBid</th>
+								            <th>User</th>
+								            <th>Bid Offer</th>
+								            <th>Date Time</th>
+							          </tr>
+						          </thead>
+						          <tbody>
+							          <tr th:each="bid : ${bids}">
+								            <td th:text="${bid.idBid}"></td>
+								            <td th:text="${bid.userMail}"></td>
+								            <td th:text="${bid.bidValue}"></td>
+								            <td th:text="${bid.bidDateTime}"></td>
+							          </tr>
+						          </tbody>
+					        </table>
+				      </div>
+			    </div>
+		  </div>
+	</fieldset>
 
-<div>
-  <a href="/MakeBid?idAuction=${auction.idAuction}">Place a Bid</a>
-</div>
-
-<div>
-  <a href="/Logout">Logout</a>
-</div>
+	<div>
+		<a href="/MakeBid?idAuction=${auction.idAuction}">Place a Bid</a>
+	</div>
+	
+	<div>
+		<a href="/Logout">Logout</a>
+	</div>
 
 </body>
 

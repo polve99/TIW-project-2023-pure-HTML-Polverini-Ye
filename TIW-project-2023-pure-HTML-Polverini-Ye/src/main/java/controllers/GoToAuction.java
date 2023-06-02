@@ -49,7 +49,7 @@ public class GoToAuction extends HttpServlet {
         bidDAO = new BidDAO(connection);
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -126,12 +126,15 @@ public class GoToAuction extends HttpServlet {
             template = "ClosedAuctionPage.html";
         }
 
-        WebContext webContext = new WebContext(request, response, getServletContext(), request.getLocale());
-        webContext.setVariables(templateVariables);
+        WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
+        ctx.setVariables(templateVariables);
+        
+        if(bids.isEmpty()){
+            ctx.setVariable("NoBidsMsg", "There are no bids at this time for this auction.");
+        }
 
         String path = "/WEB-INF/templates/" + template;
-
-        templateEngine.process(path, webContext, response.getWriter());
+        templateEngine.process(path, ctx, response.getWriter());
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -61,11 +61,11 @@ public class GoToBuy extends HttpServlet {
         }
 
         User user = (User) session.getAttribute("user");
-
         String keyword = request.getParameter("keyword");
 
-        List<Auction> auctionListOpen = new ArrayList<>();
+        //here starts the retreiving infos for open auctions table
 
+        List<Auction> auctionListOpen = new ArrayList<>();
         try {
             if (keyword != null && !keyword.isBlank()) {
                 auctionListOpen = auctionDAO.findAuctionsListByWordSearch(keyword);
@@ -79,13 +79,14 @@ public class GoToBuy extends HttpServlet {
         }
 
         List<Map<String, Object>> auctionInfoList = new ArrayList<>();
-
         for (Auction auction : auctionListOpen) {
             List<Article> articles = null;
             try {
                 articles = articleDAO.findArticlesListByIdAuction(auction.getIdAuction());
             } catch (SQLException e) {
                 e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding auctions' informations");
+                return;
             }
             Bid maxBid = null;
             try {
@@ -104,9 +105,11 @@ public class GoToBuy extends HttpServlet {
             auctionInfoList.add(auctionInfo);
         }
 
+        //here starts the retreiving infos for closed won auctions table
+
+        ArrayList<Map<String, Object>> wonAuctionInfoList = new ArrayList<>();
         try {
             ArrayList<Auction> wonAuctions = auctionDAO.getWonClosedAuctionsByUser(user.getUserMail());
-            ArrayList<Map<String, Object>> wonAuctionInfoList = new ArrayList<>();
 
             for (Auction auction : wonAuctions) {
                 ArrayList<Object> auctionClosedInfos = auctionDAO.getAuctionClosedInfosForTable(auction);
@@ -119,33 +122,34 @@ public class GoToBuy extends HttpServlet {
 
                 wonAuctionInfoList.add(auctionInfo);
             }
-
-            final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
-            String path = "/WEB-INF/templates/BuyPage.html";
-
-            if (auctionListOpen.isEmpty()) {
-                if (keyword != null && !keyword.isBlank()) {
-                    ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions for the keyword \"" + keyword + "\"");
-                } else {
-                    ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions at this time.");
-                }
-            } else {
-                ctx.setVariable("auctionInfoListOpen", auctionInfoList);
-            }
-
-            if (wonAuctionInfoList.isEmpty()) {
-                ctx.setVariable("NoWonAuctionsMsg", "You haven't won any auctions yet.");
-            } else {
-                ctx.setVariable("auctionInfoListWon", wonAuctionInfoList);
-            }
-
-            ctx.setVariable("user", user.getName());
-
-            templateEngine.process(path, ctx, response.getWriter());
         } catch (SQLException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error retrieving won auctions");
+            return;
         }
+
+        //response
+
+        WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
+        String path = "/WEB-INF/templates/BuyPage.html";
+        
+        ctx.setVariable("auctionInfoListOpen", auctionInfoList);
+        ctx.setVariable("auctionInfoListWon", wonAuctionInfoList);
+
+        if (auctionInfoList.isEmpty()) {
+            if (keyword != null && !keyword.isBlank()) {
+            	ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions for the keyword: "+keyword+".");
+            } else {
+                ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions at this time.");
+            }
+        }
+
+        if (wonAuctionInfoList.isEmpty()) {
+            ctx.setVariable("NoWonAuctionsMsg", "You haven't won any auctions yet.");
+        }
+
+        ctx.setVariable("user", user.getName());
+        templateEngine.process(path, ctx, response.getWriter());
     }
 
     private String formatTimeLeft(Timestamp expirationDateTime) {
