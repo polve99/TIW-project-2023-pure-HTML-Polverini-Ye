@@ -132,13 +132,13 @@ public class GoToBuy extends HttpServlet {
 
         WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
         String path = "/WEB-INF/templates/BuyPage.html";
-        
+
         ctx.setVariable("auctionInfoListOpen", auctionInfoList);
         ctx.setVariable("auctionInfoListWon", wonAuctionInfoList);
 
         if (auctionInfoList.isEmpty()) {
             if (keyword != null && !keyword.isBlank()) {
-            	ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions for the keyword: "+keyword+".");
+                ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions for the keyword: "+keyword+".");
             } else {
                 ctx.setVariable("NoOpenAuctionsMsg", "There are no open auctions at this time.");
             }

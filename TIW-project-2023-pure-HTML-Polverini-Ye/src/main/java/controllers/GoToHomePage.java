@@ -20,61 +20,59 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 @WebServlet("/GoToHomePage")
 public class GoToHomePage extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
-	private Connection connection = null;
+    private static final long serialVersionUID = 1L;
+    private TemplateEngine templateEngine;
+    private Connection connection = null;
 
 
-	public GoToHomePage() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public GoToHomePage() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	public void init() throws ServletException {
-		try {
-			ServletContext context = getServletContext();
-			String driver = context.getInitParameter("dbDriver");
-			String url = context.getInitParameter("dbUrl");
-			String user = context.getInitParameter("dbUser");
-			String password = context.getInitParameter("dbPassword");
-			Class.forName(driver);
-			connection = DriverManager.getConnection(url, user, password);
+    public void init() throws ServletException {
+        try {
+            ServletContext context = getServletContext();
+            String driver = context.getInitParameter("dbDriver");
+            String url = context.getInitParameter("dbUrl");
+            String user = context.getInitParameter("dbUser");
+            String password = context.getInitParameter("dbPassword");
+            Class.forName(driver);
+            connection = DriverManager.getConnection(url, user, password);
 
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw new UnavailableException("Can't load database driver");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new UnavailableException("Couldn't get db connection");
-		}
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new UnavailableException("Can't load database driver");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new UnavailableException("Couldn't get db connection");
+        }
 
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
-	}
+        ServletContext servletContext = getServletContext();
+        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        this.templateEngine = new TemplateEngine();
+        this.templateEngine.setTemplateResolver(templateResolver);
+        templateResolver.setSuffix(".html");
+    }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		// Redirect to the Home page and add missions to the parameters
-		String path = "WEB-INF/index.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		templateEngine.process(path, ctx, response.getWriter());
-	}
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Redirect to the Home page and add missions to the parameters
+        String path = "WEB-INF/index.html";
+        ServletContext servletContext = getServletContext();
+        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+        templateEngine.process(path, ctx, response.getWriter());
+    }
 
-	@Override
-	public void destroy() {
-		if (connection != null) {
-			try {
-				connection.close();
-			} catch (SQLException e){
-				
-			}
-		}
-	}
+    @Override
+    public void destroy() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e){
+
+            }
+        }
+    }
 
 }
