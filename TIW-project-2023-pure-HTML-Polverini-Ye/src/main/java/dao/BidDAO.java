@@ -17,16 +17,16 @@ public class BidDAO {
         this.connection = connection;
     }
 
-    public void createBid(int idBid, float bidValue, Timestamp bidDateTime, String userMail, int idAuction) throws SQLException {
-        String query = "INSERT INTO dbaste.bids (idBid, bidValue, bidDateTime, userMail, idAuction) VALUES (?,?,?,?,?)";
+    public void createBid(float bidValue, String userMail, int idAuction) throws SQLException {
+        String query = "INSERT INTO dbaste.bids (bidValue, bidDateTime, userMail, idAuction) VALUES (?,?,?,?)";
         PreparedStatement pstatement = null;
+        Timestamp bidDateTime = new Timestamp(System.currentTimeMillis());
         try {
             pstatement = connection.prepareStatement(query);
-            pstatement.setInt(1, idBid);
-            pstatement.setFloat(2, bidValue);
-            pstatement.setTimestamp(3, bidDateTime);
-            pstatement.setString(4, userMail);
-            pstatement.setInt(5, idAuction);
+            pstatement.setFloat(1, bidValue);
+            pstatement.setTimestamp(2, bidDateTime);
+            pstatement.setString(3, userMail);
+            pstatement.setInt(4, idAuction);
             pstatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e);

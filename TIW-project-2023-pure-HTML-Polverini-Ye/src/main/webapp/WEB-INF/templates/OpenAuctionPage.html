@@ -73,9 +73,28 @@
 			    </div>
 		  </div>
 	</fieldset>
+	
+	<div th:if="${session.bidCreated}">
+    <p>Bid created successfully!</p>
+    <!-- Rimuovi il flag 'bidCreated' dalla sessione -->
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      window.onload = function() {
+        /* Rimuovi il flag 'bidCreated' dalla sessione */
+        sessionStorage.removeItem('bidCreated');
+      };
+      /*]]>*/
+    </script>
+  </div>
 
 	<div>
-		<a href="/MakeBid?idAuction=${auction.idAuction}">Place a Bid</a>
+		<h1>Place a Bid</h1>
+		<form action="MakeBid" method="POST">
+			<input type="hidden" name="idAuction" th:value="${auction.idAuction}" />
+			<label for="bidValue">Bid Value:</label>
+			<input type="number" id="bidValue" name="bidValue" required />
+			<button type="submit">Place Bid</button>
+		</form>
 	</div>
 	
 	<div>
