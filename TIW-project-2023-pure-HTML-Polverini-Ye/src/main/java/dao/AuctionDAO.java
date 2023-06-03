@@ -190,7 +190,7 @@ public class AuctionDAO {
         return auctions;
     }
 
-    private boolean isAuctionInDB(int idAuction) throws SQLException{
+    public boolean isAuctionInDB(int idAuction) throws SQLException{
         String query = "SELECT * FROM dbaste.auctions WHERE idAuction = ?";
         PreparedStatement pStatement = null;
         boolean inDB = false;

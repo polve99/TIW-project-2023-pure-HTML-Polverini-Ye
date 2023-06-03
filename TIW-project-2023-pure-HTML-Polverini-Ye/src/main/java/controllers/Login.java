@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -44,28 +45,52 @@ public class Login extends HttpServlet {
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		boolean isValid=true;
+		
 		String userMail = request.getParameter("userMail");
-		String password = request.getParameter("password");
-		if (userMail == null || password == null || userMail.isBlank() || password.isBlank()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
-			return;
-		}
+		
+        Pattern emailPattern = Pattern.compile("^(.+)@(.+)$");
+        boolean emailValid = emailPattern.matcher(userMail).matches();
+        
+		if (userMail==null || userMail.isBlank() || userMail.length() < 5 || userMail.length() > 50 || !emailValid) {
+            request.setAttribute("emailErrorMessage", "Invalid email. Email must be between 5 and 50 characters and have a valid format (e.g., email@mail.com)");
+            isValid=false;
+        }
+		
+		String passw = request.getParameter("password");
+		if (passw==null || passw.isBlank() || passw.length() < 8 || passw.length() > 50) {
+            request.setAttribute("passwordErrorMessage", "Password must be between 8 and 50 characters");
+            isValid=false;
+        }
+		
 		UserDAO userDAO = new UserDAO(connection);
 		User user = null;
-		try {
-			user = userDAO.getUserAfterAuthentication(userMail, password);
-		} catch (SQLException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error, please retry later");
-			return;
+		
+		if(isValid) {
+			try {
+				user = userDAO.getUserAfterAuthentication(userMail, passw);
+				
+			} catch (SQLException e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error in retreiving user from db, please retry later");
+				return;
+			}
+			if(user == null) {
+				request.setAttribute("msgLogin", "Previouse authentication failed: email or password not correct.");
+				isValid = false;
+			}
+		} 
+		
+		if(isValid && user!=null) {
+			HttpSession session = request.getSession(true);
+	        session.setAttribute("user", user);
+	        session.setAttribute("language", request.getLocale().getLanguage());
+	        response.sendRedirect("GoToHome");
+		} else {
+			String path = "WEB-INF/index.html";
+            ServletContext servletContext = getServletContext();
+            final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+            templateEngine.process(path, ctx, response.getWriter());
 		}
-		if (user == null) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User not found: mail or password not correct");
-			return;
-		}
-		HttpSession session = request.getSession(true);
-		session.setAttribute("user", user);
-		session.setAttribute("language", request.getLocale().getLanguage());
-		response.sendRedirect("GoToHome");
 	}
 
 	@Override

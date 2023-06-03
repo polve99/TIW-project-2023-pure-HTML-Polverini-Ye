@@ -56,15 +56,15 @@ public class Registration extends HttpServlet {
         boolean emailValid = emailPattern.matcher(userMail).matches();
         boolean isValid = false;
 
-        if (name==" " || name.length() < 2 || name.length() > 20) {
+        if (name==null || name==" " || name.length() < 2 || name.length() > 20) {
             request.setAttribute("nameErrorMessage", "Name must be between 2 and 20 characters");
         }
 
-        if (surname.length() < 2 || surname.length() > 20) {
+        if (surname==null || surname.length() < 2 || surname.length() > 20) {
             request.setAttribute("surnameErrorMessage", "Surname must be between 2 and 20 characters");
         }
 
-        if (userMail.length() < 5 || userMail.length() > 50 || !emailValid) {
+        if (userMail==null || userMail.length() < 5 || userMail.length() > 50 || !emailValid) {
             request.setAttribute("emailErrorMessage", "Invalid email. Email must be between 5 and 50 characters and have a valid format (e.g., email@mail.com)");
         }
 
@@ -77,15 +77,15 @@ public class Registration extends HttpServlet {
             throw new RuntimeException(e);
         }
 
-        if (passw.length() < 8 || passw.length() > 50) {
+        if (passw==null || passw.length() < 8 || passw.length() > 50) {
             request.setAttribute("passwordErrorMessage", "Password must be between 8 and 50 characters");
         }
 
-        if (!passw.equals(repeatedPassword)) {
+        if (repeatedPassword==null || !passw.equals(repeatedPassword)) {
             request.setAttribute("repeatPasswordErrorMessage", "Password and repeated password do not match");
         }
 
-        if (address.length() < 1 || address.length() > 50) {
+        if (address==null || address.length() < 1 || address.length() > 50) {
             request.setAttribute("addressErrorMessage", "Address must be between 1 and 50 characters");
         }
 
