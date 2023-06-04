@@ -40,6 +40,12 @@ public class MakeBid extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/index.html");
             return;
         }
+        
+        User user = (User) session.getAttribute("user");
+        String userMail = user.getUserMail();
+
+        BidDAO bidDAO = new BidDAO(connection);
+        AuctionDAO auctionDAO = new AuctionDAO(connection);
 
         boolean isValid = true;
 
@@ -48,23 +54,12 @@ public class MakeBid extends HttpServlet {
             isValid = false;
             request.setAttribute("msgBid", "idAuction value null or empty");
         }
-
-        User user = (User) session.getAttribute("user");
-        if(request.getParameter("user") == null || request.getParameter("user").isEmpty() ){
-            isValid = false;
-            request.setAttribute("msgBid", "user value null or empty");
-        }
         
         float bidValue = Float.parseFloat(request.getParameter("bidValue"));
         if(request.getParameter("bidValue") == null || request.getParameter("bidValue").isEmpty() ){
             isValid = false;
             request.setAttribute("msgBid", "Bid value null or empty");
         }
-        
-        String userMail = user.getUserMail();
-
-        BidDAO bidDAO = new BidDAO(connection);
-        AuctionDAO auctionDAO = new AuctionDAO(connection);
 
         try {
             if(!auctionDAO.isAuctionInDB(idAuction)){
