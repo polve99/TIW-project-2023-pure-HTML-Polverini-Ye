@@ -1,0 +1,201 @@
+@charset "UTF-8";
+
+/* mystyle.css */
+
+/* Reset */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+/* Common */
+h1,
+h2 {
+    /*color: #117A65;*/
+    color: #336666;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.row {
+    margin-bottom: 20px;
+}
+
+/* Table */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+th,
+td {
+    padding: 8px;
+    text-align: left;
+}
+
+thead th {
+    background-color: #D1F2EB;
+}
+
+tr:nth-child(even) {
+    background-color: #E8F6F3;
+}
+
+/* Form */
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 70%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+}
+
+input[type="submit"],
+button {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background-color: #45A049;
+}
+
+/* Links */
+a {
+    color: #117A65;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Messages */
+.error {
+    color: #FF0000;
+    font-weight: bold;
+}
+
+.success {
+    color: #228B22;
+    font-weight: bold;
+}
+
+/* Index Page */
+h1[align="center"],
+h2[align="center"] {
+    text-align: center;
+    color: #117A65;
+}
+
+.loginContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.loginSection {
+    background-color: #E8F6F3;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+.sectionHeading {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.changeAutMethod {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.changeAutMethodInfo {
+    font-size: 14px;
+}
+
+#registerAnchor {
+    color: #117A65;
+    font-weight: bold;
+}
+
+#registerAnchor:hover {
+    text-decoration: underline;
+}
+
+/* Registration Page */
+#registration p {
+    margin-bottom: 10px;
+}
+
+.logout {
+    text-align: center;
+    margin-top: 20px;
+    color: #555;
+}
+
+/* Homepage */
+
+.button-container {
+    text-align: center;
+}
+
+.buy-button {
+    display: inline-block;
+    margin: 10px;
+    padding: 20px;
+    background-color: #993333;
+    color: #fff;
+    text-decoration: none;
+    font-size: 24px;
+    border-radius: 5px;
+}
+
+.sell-button {
+    display: inline-block;
+    margin: 10px;
+    padding: 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    font-size: 24px;
+    border-radius: 5px;
+}
+
+.logout-button {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.logout-button-small {
+    padding: 5px 10px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 3px;
+}

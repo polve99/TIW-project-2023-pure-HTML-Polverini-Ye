@@ -8,95 +8,95 @@
 </head>
 
 <body>
-	<h1>BidWars' Buy Page</h1>
-	<h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the open auctions!</h2>
+<h1>BidWars' Buy Page</h1>
+<h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the open auctions!</h2>
 
-	<form>
-	    <fieldset>
-	        <div class="container">
-	            <div class="row">
-	                <h1>List of open auctions</h1>
-	                <div th:if = "${auctionInfoListOpen.isEmpty()}">
-	                    <p th:text="${NoOpenAuctionsMsg}"></p>
-	                </div>
-	                <div th:unless = "${auctionInfoListOpen.isEmpty()}">
-	                    <table class="table">
-	                        <thead>
-	                        <tr>
-	                            <th>Auction Id</th>
-	                            <th>Articles</th>
-	                            <th>Max Bid</th>
-	                            <th>Time Left</th>
-	                        </tr>
-	                        </thead>
-	                        <tbody>
-	                        <tr th:each="auctionInfo : ${auctionInfoListOpen}">
-	                            <td>
-	                                <a th:href="@{/GoToAuction(idAuction=${auctionInfo['idAuction']})}" th:text="${auctionInfo['idAuction']}"></a>
-	                            </td>
-	                            <td>
-	                                <ul>
-	                                    <li th:each="article : ${auctionInfo['articles']}" th:text="${article.articleName}"></li>
-	                                </ul>
-	                            </td>
-	                            <td th:unless = "${maxBid==null}" th:text="${auctionInfo['maxBid']}"></td>
-	                            <td th:if="${maxBid==null}" th:text="${auctionInfo['initialPrice']}"></td>
-	                            <td>
-	                                <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
-	                            </td>
-	                        </tr>
-	                        </tbody>
-	                    </table>
-	                </div>
-	            </div>
-	        </div>
-	    </fieldset>
-	    <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword"/></p>
-	    <p><input type="submit" value="Search" /></p>
-	</form>
+<form>
+    <fieldset>
+        <div class="container">
+            <div class="row">
+                <h1>List of open auctions</h1>
+                <div th:if = "${auctionInfoListOpen.isEmpty()}">
+                    <p th:text="${NoOpenAuctionsMsg}"></p>
+                </div>
+                <div th:unless = "${auctionInfoListOpen.isEmpty()}">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Auction Id</th>
+                            <th>Articles</th>
+                            <th>Max Bid</th>
+                            <th>Time Left</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="auctionInfo : ${auctionInfoListOpen}">
+                            <td>
+                                <a th:href="@{/GoToAuction(idAuction=${auctionInfo['idAuction']})}" th:text="${auctionInfo['idAuction']}"></a>
+                            </td>
+                            <td>
+                                <ul>
+                                    <li th:each="article : ${auctionInfo['articles']}" th:text="${article.articleName}"></li>
+                                </ul>
+                            </td>
+                            <td th:unless = "${maxBid==null}" th:text="${auctionInfo['maxBid']}"></td>
+                            <td th:if="${maxBid==null}" th:text="${auctionInfo['initialPrice']}"></td>
+                            <td>
+                                <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword"/></p>
+    <p><input type="submit" value="Search" /></p>
+</form>
 
-	<h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the closed auctions you won!</h2>
+<h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the closed auctions you won!</h2>
 
-	<form>
-	    <fieldset>
-	        <div class="container">
-	            <div class="row">
-	                <h1>List of auctions you won</h1>
-	                <div th:if = "${auctionInfoListWon.isEmpty()}">
-	                    <p th:text = "${NoWonAuctionsMsg}"></p>
-	                </div>
-	                <div th:unless = "${auctionInfoListWon.isEmpty()}">
-	                    <table class="table">
-	                        <thead>
-		                        <tr>
-		                            <th>Auction Id</th>
-		                            <th>Articles</th>
-		                            <th>Winning bid</th>
-		                        </tr>
-	                        </thead>
-	                        <tbody>
-		                        <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
-		                            <td>
-		                                <a th:href="@{/GoToAuction(idAuction=${auctionInfoListWon['idAuction']})}" th:text="${auctionInfoListWon['idAuction']}"></a>
-		                            </td>
-		                            <td>
-		                                <ul>
-		                                    <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>
-		                                </ul>
-		                            </td>
-		                            <td th:text="${auctionInfoListWon['maxBid']}"></td>
-		                        </tr>
-	                        </tbody>
-	                    </table>
-	                </div>
-	            </div>
-	        </div>
-	    </fieldset>
-	</form>
+<form>
+    <fieldset>
+        <div class="container">
+            <div class="row">
+                <h1>List of auctions you won</h1>
+                <div th:if = "${auctionInfoListWon.isEmpty()}">
+                    <p th:text = "${NoWonAuctionsMsg}"></p>
+                </div>
+                <div th:unless = "${auctionInfoListWon.isEmpty()}">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Auction Id</th>
+                            <th>Articles</th>
+                            <th>Winning bid</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
+                            <td>
+                                <a th:href="@{/GoToAuction(idAuction=${auctionInfoListWon['idAuction']})}" th:text="${auctionInfoListWon['idAuction']}"></a>
+                            </td>
+                            <td>
+                                <ul>
+                                    <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>
+                                </ul>
+                            </td>
+                            <td th:text="${auctionInfoListWon['maxBid']}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>
 
-	<div>
-	    <a href="/Logout" th:href="@{/Logout}">Logout</a>
-	</div>
+<div class="logout-button">
+    <a th:href="@{Logout}" class="logout-button-small">Logout</a>
+</div>
 
 </body>
 
