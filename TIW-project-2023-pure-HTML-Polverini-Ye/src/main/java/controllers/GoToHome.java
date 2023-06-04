@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -40,6 +39,9 @@ public class GoToHome extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
+        List<String> newNavigationHistory = new ArrayList<>();    	//TODO: chiedere al carlone cosa serve sta roba e se serve
+        newNavigationHistory.add("GoToHome");						//TODO: chiedere al carlone cosa serve sta roba e se serve
+        user.setNavigationHistory(newNavigationHistory);			//TODO: chiedere al carlone cosa serve sta roba e se serve
         ServletContext servletContext = getServletContext();
         String path = "WEB-INF/templates/HomePage.html";
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
