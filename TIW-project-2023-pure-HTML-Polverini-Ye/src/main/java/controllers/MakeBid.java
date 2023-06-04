@@ -35,11 +35,11 @@ public class MakeBid extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
+        /*if (session == null || session.getAttribute("user") == null) {
             request.setAttribute("msgIndex", "You must be logged in to make a bid");
             response.sendRedirect(request.getContextPath() + "/index.html");
             return;
-        }
+        }*/
         
         User user = (User) session.getAttribute("user");
         String userMail = user.getUserMail();
@@ -50,6 +50,7 @@ public class MakeBid extends HttpServlet {
         boolean isValid = true;
 
         int idAuction = (int) session.getAttribute("idAuction");
+        System.out.println(idAuction);
         if(request.getParameter("idAuction") == null || request.getParameter("idAuction").isEmpty() ){
             isValid = false;
             request.setAttribute("msgBid", "idAuction value null or empty");
@@ -91,6 +92,10 @@ public class MakeBid extends HttpServlet {
                 if(bidValue < maxBidValue + minRise) {
                     isValid = false;
                     request.setAttribute("msgBid", "Bid value too low (must be greater than the current bid value (" + maxBidValue + ") + min rise (" + minRise + "))");
+                }
+                if(maxBid.getUserMail().equals(user.getUserMail())) {
+                	isValid = false;
+                	request.setAttribute("msgBid", "Your are already the top bidder, you can't do another bid untill someone else make a bid higers than yours");
                 }
             } catch (SQLException e) {
             	e.printStackTrace();

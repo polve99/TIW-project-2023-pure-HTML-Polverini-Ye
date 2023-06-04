@@ -51,10 +51,10 @@ public class GoToAuction extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
+        /*if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
-        }
+        }*/
 
         User user = (User) session.getAttribute("user");
 
@@ -137,7 +137,11 @@ public class GoToAuction extends HttpServlet {
         if (msgBid != null) {
             ctx.setVariable("msgBid", msgBid);
         }
-
+        if(auction.getUserMail().equals(user.getUserMail())) {
+        	ctx.setVariable("bidform", "false");
+        } else {
+        	ctx.setVariable("bidform", "true");
+        }
         String path = "/WEB-INF/templates/" + template;
         templateEngine.process(path, ctx, response.getWriter());
     }

@@ -267,6 +267,7 @@ public class ArticleDAO {
             
             //System.out.println(resultSet.getInt("articleCode"));
             //TODO: sistemare e capire perchè si blocca qua
+            if(!resultSet.next()) return null;
             int articleCode = resultSet.getInt("articleCode");
             String articleName = resultSet.getString("articleName");
             String articleDesc = resultSet.getString("articleDescription");
