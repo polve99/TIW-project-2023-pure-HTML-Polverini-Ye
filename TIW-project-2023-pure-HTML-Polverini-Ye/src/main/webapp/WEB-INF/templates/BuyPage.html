@@ -39,7 +39,8 @@
 	                                    <li th:each="article : ${auctionInfo['articles']}" th:text="${article.articleName}"></li>
 	                                </ul>
 	                            </td>
-	                            <td th:text="${auctionInfo['maxBid']}"></td>
+	                            <td th:unless = "${maxBid==null}" th:text="${auctionInfo['maxBid']}"></td>
+	                            <td th:if="${maxBid==null}" th:text="${auctionInfo['initialPrice']}"></td>
 	                            <td>
 	                                <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
 	                            </td>

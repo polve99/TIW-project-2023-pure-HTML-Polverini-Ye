@@ -33,8 +33,12 @@
 			              		<li th:each="article : ${articles}" th:text="${article.articleName}"></li>
 			            	</ul>
 			          	</td>
-			          	<td th:text="${maxBid.userMail}"></td>
-			          	<td th:text="${maxBid.bidValue}"></td>
+			          	<td th:unless = "${bids.isEmpty()}" th:text="${maxBid.userMail}"></td>
+			          	<td th:if = "${bids.isEmpty()}">No one</td>
+			          	
+			          	<td th:unless = "${bids.isEmpty()}" th:text="${maxBid.bidValue}"></td>
+			          	<td th:if="${bids.isEmpty()}" th:text="${initialPrice}"></td>
+			          	
 			          	<td th:text="${timeLeftFormatted}"></td>
 			        </tr>
 	        	</tbody>

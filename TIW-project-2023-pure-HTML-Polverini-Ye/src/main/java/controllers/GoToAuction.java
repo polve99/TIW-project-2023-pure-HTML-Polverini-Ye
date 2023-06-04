@@ -76,6 +76,7 @@ public class GoToAuction extends HttpServlet {
         Auction auction;
         List<Article> articles;
         Bid maxBid;
+        float initialPrice;
         List<Bid> bids;
         List<Object> closedAuctionInfo = null;
 
@@ -83,6 +84,7 @@ public class GoToAuction extends HttpServlet {
             auction = auctionDAO.findAuctionByIdAuction(idAuction);
             articles = articleDAO.findArticlesListByIdAuction(idAuction);
             maxBid = bidDAO.findMaxBidInAuction(idAuction);
+            initialPrice = auction.getInitialPrice();
             bids = bidDAO.findBidsListByIdAuction(idAuction);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,6 +118,7 @@ public class GoToAuction extends HttpServlet {
         templateVariables.put("auction", auction);
         templateVariables.put("articles", articles);
         templateVariables.put("maxBid", maxBid);
+        templateVariables.put("initialPrice", initialPrice);
         templateVariables.put("bids", bids);
         templateVariables.put("timeLeftFormatted", formatTimeLeft(auction.getExpirationDateTime()));
         if(closedAuctionInfo != null) templateVariables.put("closedAuctionInfo", closedAuctionInfo);
@@ -132,7 +135,7 @@ public class GoToAuction extends HttpServlet {
         if(bids.isEmpty()){
             ctx.setVariable("NoBidsMsg", "There are no bids at this time for this auction.");
         }
-        
+
         String msgBid = (String) request.getAttribute("msgBid");
         if (msgBid != null) {
             ctx.setVariable("msgBid", msgBid);

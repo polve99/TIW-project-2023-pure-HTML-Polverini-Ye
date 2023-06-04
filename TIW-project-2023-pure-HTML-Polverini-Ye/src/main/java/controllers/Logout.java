@@ -25,8 +25,6 @@ public class Logout extends HttpServlet{
             return;
         }
 
-        //Redirect to the login page
-        String path = getServletContext().getContextPath() +  "GoToHomePage";
         response.sendRedirect("GoToHomePage");
     }
 }
