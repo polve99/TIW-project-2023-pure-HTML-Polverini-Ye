@@ -8,10 +8,10 @@
 </head>
 
 <body>
-<h1>BidWars' Buy Page</h1>
-<h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the open auctions!</h2>
+<h1 style="text-align: center;">BidWars' Buy Page</h1>
+<h2 style="text-align: center;">Hi <span th:text="${session.user.name}"></span>, here's a list of all the open auctions!</h2>
 
-<form>
+<form style="text-align: center;">
     <fieldset>
         <div class="container">
             <div class="row">
@@ -26,6 +26,7 @@
                             <th>Auction Id</th>
                             <th>Articles</th>
                             <th>Max Bid</th>
+                            <th>Min Rise</th>
                             <th>Time Left</th>
                         </tr>
                         </thead>
@@ -35,12 +36,16 @@
                                 <a th:href="@{/GoToAuction(idAuction=${auctionInfo['idAuction']})}" th:text="${auctionInfo['idAuction']}"></a>
                             </td>
                             <td>
-                                <ul>
-                                    <li th:each="article : ${auctionInfo['articles']}" th:text="${article.articleName}"></li>
-                                </ul>
+                               <ul>
+	                                 <li th:each="article : ${auctionInfo['articles']}">
+									   <p th:text="${article.articleName}" style="display: inline; margin-right: 10px;"></p>
+									   <img th:src="@{'/images/' + ${article.image}}" th:alt="${'Immagine ' + article.image}" width="50" height="35" style="display: inline-block"/>	    
+									</li>
+                               </ul>
                             </td>
                             <td th:unless = "${maxBid==null}" th:text="${auctionInfo['maxBid']}"></td>
                             <td th:if="${maxBid==null}" th:text="${auctionInfo['initialPrice']}"></td>
+                            <td th:text = "${auctionInfo['minRise']}"></td>
                             <td>
                                 <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
                             </td>
@@ -51,13 +56,18 @@
             </div>
         </div>
     </fieldset>
-    <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword"/></p>
-    <p><input type="submit" value="Search" /></p>
+    <br><br>
+    <div style="text-align: center;" >
+	    <fieldset>
+		    <p>Search for an auction by keyword: <input type="text" id="keyword" name="keyword"/></p>
+		    <p><input type="submit" value="Search" /></p>
+	    </fieldset>
+    </div>
 </form>
+<br><br>
+<h2 style="text-align: center;">Hi <span th:text="${session.user.name}"></span>, here's a list of all the closed auctions you won!</h2>
 
-<h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all the closed auctions you won!</h2>
-
-<form>
+<form style="text-align: center;">
     <fieldset>
         <div class="container">
             <div class="row">

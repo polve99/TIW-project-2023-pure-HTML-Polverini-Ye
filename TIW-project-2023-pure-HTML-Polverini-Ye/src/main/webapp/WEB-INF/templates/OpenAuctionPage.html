@@ -78,7 +78,7 @@
   </div>
 </fieldset>
 
-<div>
+<div th:if = "${bidform == 'true'}">
   <h1>Place a Bid</h1>
   <form action="MakeBid" method="POST">
     <input type="hidden" name="idAuction" th:value="${auction.idAuction}" />

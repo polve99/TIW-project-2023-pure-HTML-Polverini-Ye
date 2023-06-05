@@ -27,6 +27,7 @@
 	                                <th>Auction Id</th>
 	                                <th>Articles</th>
 	                                <th>Max Bid</th>
+	                                <th>Min Rise</th>
 	                                <th>Time Left</th>
 	                            </tr>
 	                        </thead>
@@ -38,10 +39,15 @@
 	                                </td>
 	                                <td>
 	                                    <ul>
-	                                        <li th:each="article : ${auctionInfo['articles']}" th:text="${article.articleName}"></li>
+	                                        <li th:each="article : ${auctionInfo['articles']}">
+											   <p th:text="${article.articleName}" style="display: inline; margin-right: 10px;"></p>
+											   <img th:src="@{'/images/' + ${article.image}}" th:alt="${'Immagine ' + article.image}" width="50" height="35" style="display: inline-block"/>	    
+											</li>
 	                                    </ul>
 	                                </td>
-	                                <td th:text="${auctionInfo['maxBid']}"></td>
+	                                <td th:unless = "${maxBid==null}" th:text="${auctionInfo['maxBid']}"></td>
+                            		<td th:if="${maxBid==null}" th:text="${auctionInfo['initialPrice']}"></td>
+                            		<td th:text = "${auctionInfo['minRise']}"></td>
 	                                <td>
 	                                    <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
 	                                </td>
@@ -113,7 +119,7 @@
     	</fieldset>
     </form>
     
-
+	<div th:if = "${!imageList.isEmpty()}">
 	<form action="CreateAuction" method="POST">
 	    <h2>Do you want to create an auction?</h2>
 	    <fieldset>
@@ -136,6 +142,7 @@
 	        <input type="submit" value="CreateAuction">
 	    </fieldset>
 	</form>
+	</div>
 
     <div class="logout-button">
 	  <a th:href="@{Logout}" class="logout-button-small">Logout</a>

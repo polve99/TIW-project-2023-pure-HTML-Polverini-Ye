@@ -22,9 +22,10 @@ public class AuctionDAO {
         String query = "INSERT INTO dbaste.auctions (initialPrice, minRise, expirationDateTime, userMail) VALUES (?, ?, ?, ?)";
         PreparedStatement pStatement = null;
         ResultSet keys = null;
+        int idAuction=0;
 
         try {
-            pStatement = connection.prepareStatement(query);
+            pStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             pStatement.setFloat(1, initialPrice);
             pStatement.setFloat(2, minRise);
             pStatement.setTimestamp(3, expirationDateTime);
@@ -35,6 +36,7 @@ public class AuctionDAO {
 			if (!auctionCreated) {
 				return 0;
 			}
+            idAuction = keys.getInt(1);
         } catch (SQLException e) {
             throw new SQLException(e);
         } finally {
@@ -46,7 +48,7 @@ public class AuctionDAO {
                 throw new SQLException(e2);
             }
         }
-        return  keys.getInt(1);
+        return  idAuction;
     }
 
     public boolean addArticleInAuction(int idAuction, int articleCode) throws SQLException{

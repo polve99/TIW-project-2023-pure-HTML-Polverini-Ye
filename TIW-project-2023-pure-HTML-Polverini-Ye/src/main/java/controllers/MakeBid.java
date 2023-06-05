@@ -111,6 +111,12 @@ public class MakeBid extends HttpServlet {
                         request.setAttribute("msgBid", "Bid value too low (must be greater than the current bid value (" + maxBidValue + ") + min rise (" + minRise + "))");
                     }
                 }
+                /*if(auction.getUserMail().equals(user.getUserMail())) {
+                	isValid = false;
+                	request.setAttribute("owner", "true");
+                } else {
+                	request.setAttribute("owner", "false");
+                }*/
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error in db. Please, retry later.");

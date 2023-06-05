@@ -81,23 +81,25 @@ public class GoToSell extends HttpServlet {
 
         for (Auction auction : auctionListOpen) {
             List<Article> articles = null;
+            Bid maxBid = null;
+            float initialPrice;
             try {
                 articles = articleDAO.findArticlesListByIdAuction(auction.getIdAuction());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            Bid maxBid = null;
-            try {
                 maxBid = bidDAO.findMaxBidInAuction(auction.getIdAuction());
+                initialPrice = auction.getInitialPrice();
             } catch (SQLException e) {
                 e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding auctions' informations");
+                return;
             }
             Timestamp expirationDateTime = auction.getExpirationDateTime();
 
             Map<String, Object> auctionInfo = new HashMap<>();
             auctionInfo.put("idAuction", auction.getIdAuction());
             auctionInfo.put("articles", articles);
-            auctionInfo.put("maxBid", maxBid != null ? maxBid.getBidValue() : null);
+            auctionInfo.put("maxBid", maxBid);
+            auctionInfo.put("initialPrice", initialPrice);
+            auctionInfo.put("minRise", auction.getMinRise());
             auctionInfo.put("timeLeftFormatted", formatTimeLeft(expirationDateTime));
 
             auctionInfoList.add(auctionInfo);

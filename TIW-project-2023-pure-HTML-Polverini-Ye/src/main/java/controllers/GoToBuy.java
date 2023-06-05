@@ -99,6 +99,7 @@ public class GoToBuy extends HttpServlet {
             auctionInfo.put("articles", articles);
             auctionInfo.put("maxBid", maxBid);
             auctionInfo.put("initialPrice", initialPrice);
+            auctionInfo.put("minRise", auction.getMinRise());
             auctionInfo.put("timeLeftFormatted", formatTimeLeft(expirationDateTime));
 
             auctionInfoList.add(auctionInfo);
