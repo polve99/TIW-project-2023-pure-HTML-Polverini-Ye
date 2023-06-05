@@ -70,6 +70,7 @@ public class GoToAuction extends HttpServlet {
         int idAuction;
         try {
             idAuction = Integer.parseInt(idAuctionParam);
+            //TODO: aggiungi controllo
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid auction ID");
             return;
