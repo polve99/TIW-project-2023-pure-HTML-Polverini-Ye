@@ -51,12 +51,6 @@ public class GoToAuction extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession(false);
-        /*
-        if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        */
 
         User user = (User) session.getAttribute("user");
 
@@ -70,13 +64,18 @@ public class GoToAuction extends HttpServlet {
         int idAuction;
         try {
             idAuction = Integer.parseInt(idAuctionParam);
-            //TODO: aggiungi controllo
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid auction ID");
-            return;
+            if(!auctionDAO.isAuctionInDB(idAuction)){
+                String errorString = "Previous idAuction in request not found. Back to BuyPage";
+                request.setAttribute("errorString", errorString);
+                request.getRequestDispatcher("/GoToBuy").forward(request, response);
+                return;
+            }
+        } catch (SQLException | ServletException e) {
+            throw new RuntimeException(e);
         }
 
         Auction auction;
+        boolean isAuctionNotExpired = false;
         List<Article> articles;
         Bid maxBid;
         float initialPrice;
@@ -85,6 +84,7 @@ public class GoToAuction extends HttpServlet {
 
         try {
             auction = auctionDAO.findAuctionByIdAuction(idAuction);
+            isAuctionNotExpired = auctionDAO.isAuctionNotExpired(idAuction);
             articles = articleDAO.findArticlesListByIdAuction(idAuction);
             maxBid = bidDAO.findMaxBidInAuction(idAuction);
             initialPrice = auction.getInitialPrice();
@@ -94,14 +94,8 @@ public class GoToAuction extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in retrieving auction details");
             return;
         }
-
-        boolean isAuctionOpen = false;
-        try {
-            isAuctionOpen = auctionDAO.isAuctionOpen(idAuction);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        if(!isAuctionOpen){
+        
+        if(!isAuctionNotExpired){
             try{
                 closedAuctionInfo = auctionDAO.getAuctionClosedInfos(auction);
             } catch (SQLException e) {
@@ -126,7 +120,7 @@ public class GoToAuction extends HttpServlet {
         templateVariables.put("timeLeftFormatted", formatTimeLeft(auction.getExpirationDateTime()));
         if(closedAuctionInfo != null) templateVariables.put("closedAuctionInfo", closedAuctionInfo);
 
-        if (isAuctionOpen) {
+        if (auction.isOpen()) { //checks the isOpen attribute
             template = "OpenAuctionPage.html";
         } else {
             template = "ClosedAuctionPage.html";
@@ -143,17 +137,22 @@ public class GoToAuction extends HttpServlet {
         if (msgBid != null) {
             ctx.setVariable("msgBid", msgBid);
         }
+        
+        String closeMsg = (String) request.getAttribute("closeMsg");
+        if (closeMsg != null) {
+            ctx.setVariable("closeMsg", closeMsg);
+        }
 
         if(auction.getUserMail().equals(user.getUserMail())) {
-        	ctx.setVariable("bidform", "false");
+            ctx.setVariable("bidform", "false");
         } else {
-        	ctx.setVariable("bidform", "true");
+            ctx.setVariable("bidform", "true");
         }
-        
+
         String path = "/WEB-INF/templates/" + template;
         templateEngine.process(path, ctx, response.getWriter());
     }
-
+    
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Chiamiamo il metodo doGet per gestire la logica comune alle richieste GET e POST
         doGet(request, response);
