@@ -92,7 +92,12 @@
                                         <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>
                                     </ul>
                                 </td>
-                                <td th:text="${auctionInfoListWon['maxBid']}"></td>
+                                <div th:if = "${auctionInfoListWon['maxBid'] != 0.0}">
+                                	<td th:text="${auctionInfoListWon['maxBid']}"></td>
+                                </div>
+                                <div th:unless = "${auctionInfoListWon['maxBid'] != 0.0}">
+                                	<td><p>No Bidders</p></td>
+                                </div>
                             </tr>
                         </tbody>
                     </table>
