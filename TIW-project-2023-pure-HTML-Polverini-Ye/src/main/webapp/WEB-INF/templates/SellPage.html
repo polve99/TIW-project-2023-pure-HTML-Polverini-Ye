@@ -11,6 +11,10 @@
     <h1>BidWars' Sell Page</h1>
     <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all your open auctions!</h2>
 
+	<div th:if="${errorString != null}">
+    	<p th:text="${errorString}" class="error"></p>
+	</div>
+	
     <form>
         <fieldset>
             <div class="container">
@@ -45,8 +49,8 @@
 											</li>
 	                                    </ul>
 	                                </td>
-	                                <td th:unless = "${maxBid==null}" th:text="${auctionInfo['maxBid']}"></td>
-                            		<td th:if="${maxBid==null}" th:text="${auctionInfo['initialPrice']}"></td>
+	                                <td th:text="${auctionInfo['maxBidValue']}"></td>
+                            		<td th:text="${auctionInfo['initialPrice']}"></td>
                             		<td th:text = "${auctionInfo['minRise']}"></td>
 	                                <td>
 	                                    <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
@@ -92,12 +96,9 @@
                                         <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>
                                     </ul>
                                 </td>
-                                <div th:if = "${auctionInfoListWon['maxBid'] != 0.0}">
-                                	<td th:text="${auctionInfoListWon['maxBid']}"></td>
-                                </div>
-                                <div th:unless = "${auctionInfoListWon['maxBid'] != 0.0}">
-                                	<td><p>No Bidders!</p></td>
-                                </div>
+                                
+                                <td th:text="${auctionInfoListWon['maxBidValue']}"></td>
+                                
                             </tr>
                         </tbody>
                     </table>

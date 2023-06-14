@@ -120,7 +120,7 @@ public class GoToBuy extends HttpServlet {
                 Map<String, Object> auctionInfo = new HashMap<>();
 
                 auctionInfo.put("idAuction", auction.getIdAuction());
-                auctionInfo.put("maxBid", ((Bid) auctionClosedInfos.get(0)).getBidValue());
+                auctionInfo.put("maxBidValue", ((Bid)auctionClosedInfos.get(0)).getBidValue());
                 auctionInfo.put("articles", auctionClosedInfos.get(1));
 
                 wonAuctionInfoList.add(auctionInfo);
@@ -157,6 +157,7 @@ public class GoToBuy extends HttpServlet {
         }
 
         ctx.setVariable("user", user.getName());
+        session.setAttribute("from", "BuyPage"); //used in GoToAuction for handling errors
         templateEngine.process(path, ctx, response.getWriter());
     }
 

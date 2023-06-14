@@ -76,17 +76,20 @@ public class GoToSell extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding auctions");
             return;
         }
-
+        
         List<Map<String, Object>> auctionInfoList = new ArrayList<>();
-
         for (Auction auction : auctionListOpen) {
             List<Article> articles = null;
             Bid maxBid = null;
-            float initialPrice;
+            float maxBidValue;
             try {
                 articles = articleDAO.findArticlesListByIdAuction(auction.getIdAuction());
                 maxBid = bidDAO.findMaxBidInAuction(auction.getIdAuction());
-                initialPrice = auction.getInitialPrice();
+                if(maxBid==null) {
+                	maxBidValue = auction.getInitialPrice();
+                }else {
+                	maxBidValue = maxBid.getBidValue();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding auctions' informations");
@@ -97,8 +100,7 @@ public class GoToSell extends HttpServlet {
             Map<String, Object> auctionInfo = new HashMap<>();
             auctionInfo.put("idAuction", auction.getIdAuction());
             auctionInfo.put("articles", articles);
-            auctionInfo.put("maxBid", maxBid);
-            auctionInfo.put("initialPrice", initialPrice);
+            auctionInfo.put("maxBidValue", maxBidValue);
             auctionInfo.put("minRise", auction.getMinRise());
             auctionInfo.put("timeLeftFormatted", formatTimeLeft(expirationDateTime));
 
@@ -113,9 +115,16 @@ public class GoToSell extends HttpServlet {
                 ArrayList<Object> auctionClosedInfos = auctionDAO.getAuctionClosedInfosForTable(auction);
 
                 Map<String, Object> auctionInfo = new HashMap<>();
-
+                
                 auctionInfo.put("idAuction", auction.getIdAuction());
-                auctionInfo.put("maxBid", ((Bid) auctionClosedInfos.get(0)).getBidValue());
+               
+                
+                if(auctionClosedInfos.get(0)==null) {
+                	auctionInfo.put("maxBidValue", "No bidders.");
+                } else {
+                	auctionInfo.put("maxBidValue", auctionClosedInfos.get(0));
+                }
+                
                 auctionInfo.put("articles", auctionClosedInfos.get(1));
 
                 ownClosedAuctionInfoList.add(auctionInfo);
@@ -174,9 +183,9 @@ public class GoToSell extends HttpServlet {
             }
 
             ctx.setVariable("user", user.getName());
-           
-
+            session.setAttribute("from", "SellPage"); //used in GoToAuction for handling errors
             templateEngine.process(path, ctx, response.getWriter());
+            
         } catch (SQLException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error retrieving won auctions");

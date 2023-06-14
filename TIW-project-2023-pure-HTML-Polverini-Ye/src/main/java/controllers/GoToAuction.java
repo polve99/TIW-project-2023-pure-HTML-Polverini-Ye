@@ -62,12 +62,21 @@ public class GoToAuction extends HttpServlet {
         }
 
         int idAuction;
+        
         try {
             idAuction = Integer.parseInt(idAuctionParam);
             if(!auctionDAO.isAuctionInDB(idAuction)){
-                String errorString = "Previous idAuction in request not found. Back to BuyPage";
+                String errorString = "Previous idAuction in request not found. Back to previous page.";
                 request.setAttribute("errorString", errorString);
-                request.getRequestDispatcher("/GoToBuy").forward(request, response);
+                
+                //checks attribute 'from' to go back
+                if(session.getAttribute("from").equals("BuyPage")) {
+                	request.getRequestDispatcher("/GoToBuy").forward(request, response);
+                }else if(session.getAttribute("from").equals("SellPage")){
+                	request.getRequestDispatcher("/GoToSell").forward(request, response);
+                }else {
+                	response.sendRedirect("GoToHome");
+                }
                 return;
             }
         } catch (SQLException | ServletException e) {
