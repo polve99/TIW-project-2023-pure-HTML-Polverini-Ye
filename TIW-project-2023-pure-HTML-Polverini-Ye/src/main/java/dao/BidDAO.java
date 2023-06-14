@@ -42,7 +42,7 @@ public class BidDAO {
     }
 
     public Bid findBidByIdBid(int idBid) throws SQLException{
-        Bid bid = new Bid();
+        Bid bid = null;
         String query = "SELECT * FROM dbaste.bids WHERE idBid = ?";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
@@ -52,6 +52,7 @@ public class BidDAO {
             pStatement.setInt(1, idBid);
             resultSet = pStatement.executeQuery();
             while (resultSet.next()) {
+            	bid = new Bid();
                 bid.setIdBid(resultSet.getInt("idBid"));
                 bid.setBidValue(resultSet.getFloat("bidValue"));
                 bid.setBidDateTime(resultSet.getTimestamp("bidDateTime"));
@@ -160,7 +161,7 @@ public class BidDAO {
     }
 
     public Bid findMaxBidInAuction(int idAuction) throws SQLException {
-        Bid bid = new Bid();
+        Bid bid = null;
         String query = "SELECT * FROM dbaste.bids WHERE idAuction = ? AND bidValue = (SELECT MAX(bidValue) FROM dbaste.bids WHERE idAuction = ?)";
         ResultSet resultSet = null;
         PreparedStatement pStatement = null;
@@ -171,6 +172,7 @@ public class BidDAO {
             pStatement.setInt(2, idAuction);
             resultSet = pStatement.executeQuery();
             if (resultSet.next()) {
+            	bid = new Bid();
                 bid.setIdBid(resultSet.getInt("idBid"));
                 bid.setBidValue(resultSet.getFloat("bidValue"));
                 bid.setBidDateTime(resultSet.getTimestamp("bidDateTime"));

@@ -11,6 +11,10 @@
 <h1>BidWars' Closed Auction Page</h1>
 <h2>Hi <span th:text="${user.name}"></span>, here are the details of the closed auction '<span th:text="${session.idAuction}"></span>', you are looking at:</h2>
 
+<div th:if="${closeMsg != null}">
+  <p th:text="${closeMsg}"></p>
+</div>
+
 <fieldset>
     <div class="container">
         <div class="row">
@@ -19,8 +23,8 @@
                 <thead>
                 <tr>
                     <th>Articles</th>
-                    <th>Winning Bidder</th>
                     <th>Winning Price</th>
+                    <th>Winning Bidder</th>
                     <th>Shipping Address</th>
                 </tr>
                 </thead>

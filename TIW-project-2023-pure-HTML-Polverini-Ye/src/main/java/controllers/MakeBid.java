@@ -35,12 +35,6 @@ public class MakeBid extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        /*
-        if (session == null || session.getAttribute("user") == null) {
-            request.setAttribute("msgIndex", "You must be logged in to make a bid");
-            response.sendRedirect(request.getContextPath() + "/index.html");
-            return;
-        }*/
 
         User user = (User) session.getAttribute("user");
         String userMail = user.getUserMail();
@@ -62,20 +56,6 @@ public class MakeBid extends HttpServlet {
             request.setAttribute("msgBid", "Bid value null or empty");
         }
 
-        try {
-            if(!auctionDAO.isAuctionInDB(idAuction)){
-                isValid = false;
-                request.setAttribute("msgBid", "idAuction passed in session not found in db");
-            } else if(!auctionDAO.isAuctionOpen(idAuction)){
-                isValid = false;
-                request.setAttribute("msgBid", "Auction is closed");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error. Please, retry later.");
-            return;
-        }
-
         if(bidValue <= 0){
             request.setAttribute("msgBid", "Bid value must be greater than 0");
         } else {
@@ -85,6 +65,12 @@ public class MakeBid extends HttpServlet {
                 if(userMail.equals(auction.getUserMail())) {
                     isValid = false;
                     request.setAttribute("msgBid", "You created this auction! You cannot place a bid!");
+                } else if(!auction.isOpen()){
+                    isValid = false;
+                    request.setAttribute("msgBid", "Auction is closed");
+                } else if(!auctionDAO.isAuctionNotExpired(idAuction)) {
+                	isValid = false;
+                    request.setAttribute("msgBid", "Auction is expired");
                 }
 
                 float minRise = auction.getMinRise();
@@ -111,17 +97,12 @@ public class MakeBid extends HttpServlet {
                         request.setAttribute("msgBid", "Bid value too low (must be greater than the current bid value (" + maxBidValue + ") + min rise (" + minRise + "))");
                     }
                 }
-                /*if(auction.getUserMail().equals(user.getUserMail())) {
-                	isValid = false;
-                	request.setAttribute("owner", "true");
-                } else {
-                	request.setAttribute("owner", "false");
-                }*/
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error in db. Please, retry later.");
                 return;
             }
+            
             if(isValid){
                 try {
                     bidDAO.createBid(bidValue, userMail, idAuction);

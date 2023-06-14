@@ -82,11 +82,15 @@ public class GoToBuy extends HttpServlet {
         for (Auction auction : auctionListOpen) {
             List<Article> articles = null;
             Bid maxBid = null;
-            float initialPrice;
+            float maxBidValue;
             try {
                 articles = articleDAO.findArticlesListByIdAuction(auction.getIdAuction());
                 maxBid = bidDAO.findMaxBidInAuction(auction.getIdAuction());
-                initialPrice = auction.getInitialPrice();
+                if(maxBid==null) {
+                	maxBidValue = auction.getInitialPrice();
+                }else {
+                	maxBidValue = maxBid.getBidValue();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding auctions' informations");
@@ -97,8 +101,7 @@ public class GoToBuy extends HttpServlet {
             Map<String, Object> auctionInfo = new HashMap<>();
             auctionInfo.put("idAuction", auction.getIdAuction());
             auctionInfo.put("articles", articles);
-            auctionInfo.put("maxBid", maxBid);
-            auctionInfo.put("initialPrice", initialPrice);
+            auctionInfo.put("maxBidValue", maxBidValue);
             auctionInfo.put("minRise", auction.getMinRise());
             auctionInfo.put("timeLeftFormatted", formatTimeLeft(expirationDateTime));
 
@@ -148,8 +151,18 @@ public class GoToBuy extends HttpServlet {
             ctx.setVariable("NoWonAuctionsMsg", "You haven't won any auctions yet.");
         }
 
+        String errorString = (String) request.getAttribute("errorString"); //from CloseAuction servlet
+        if (errorString != null) {
+            ctx.setVariable("errorString", errorString);
+        }
+
         ctx.setVariable("user", user.getName());
         templateEngine.process(path, ctx, response.getWriter());
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Chiamiamo il metodo doGet per gestire la logica comune alle richieste GET e POST
+        doGet(request, response);
     }
 
     private String formatTimeLeft(Timestamp expirationDateTime) {

@@ -5,12 +5,13 @@ public class Article {
     private int articleCode;
     private String articleName;
     private String articleDescription;
-    private String image; 
+    private String image;
     private float articlePrice;
     private int idAuction;
     private String userMail;
 
     public Article() {
+        super();
     }
 
     public Article(int articleCode, String articleName, String articleDescription, String image, float articlePrice, String userMail) {
@@ -19,7 +20,6 @@ public class Article {
         this.articleDescription = articleDescription;
         this.image = image;
         this.articlePrice = articlePrice;
-        //this.idAuction = idAuction;
         this.userMail = userMail;
     }
 
@@ -64,11 +64,12 @@ public class Article {
     public void setIdAuction(int idAuction) {
         this.idAuction = idAuction;
     }
+
     public String getUserMail() {
         return userMail;
     }
     public void setUserMail(String userMail) {
-    	this.userMail = userMail;
+        this.userMail = userMail;
     }
 
 }

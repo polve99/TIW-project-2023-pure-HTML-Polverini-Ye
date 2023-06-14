@@ -10,10 +10,12 @@ public class Auction {
     private float minRise;
     private Timestamp expirationDateTime;
     private String userMail;
+    private boolean isOpen;
 
     private ArrayList<Article> articles;
 
     public Auction() {
+        super();
     }
 
     public Auction(int idAuction, float initialPrice, float minRise, String expirationDateTime, String userMail) {
@@ -22,6 +24,7 @@ public class Auction {
         this.minRise = minRise;
         this.expirationDateTime = Timestamp.valueOf(expirationDateTime);
         this.userMail = userMail;
+        this.isOpen = true;
 
         this.articles = new ArrayList<>();
     }
@@ -59,6 +62,13 @@ public class Auction {
     }
     public void setUserMail(String userMail) {
         this.userMail = userMail;
+    }
+    
+    public boolean isOpen() {
+        return isOpen;
+    }
+    public void setOpen(boolean isOpen) {
+        this.isOpen = isOpen;
     }
 
     public ArrayList<Article> getArticles() {

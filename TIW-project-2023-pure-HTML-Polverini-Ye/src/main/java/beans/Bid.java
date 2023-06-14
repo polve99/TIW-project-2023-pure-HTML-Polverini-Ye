@@ -11,6 +11,7 @@ public class Bid {
     private int idAuction;
 
     public Bid() {
+        super();
     }
 
     public Bid(int idBid, String userMail, float bidValue, Timestamp bidDateTime, int idAuction) {

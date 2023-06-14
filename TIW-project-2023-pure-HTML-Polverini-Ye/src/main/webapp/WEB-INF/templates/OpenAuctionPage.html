@@ -33,11 +33,11 @@
               <li th:each="article : ${articles}" th:text="${article.articleName}"></li>
             </ul>
           </td>
-          <td th:unless = "${bids.isEmpty()}" th:text="${maxBid.userMail}"></td>
-          <td th:if = "${bids.isEmpty()}">No one</td>
+          <td th:unless = "${maxBid==null}" th:text="${maxBid.userMail}"></td>
+          <td th:if = "${maxBid==null}">No one</td>
 
-          <td th:unless = "${bids.isEmpty()}" th:text="${maxBid.bidValue}"></td>
-          <td th:if="${bids.isEmpty()}" th:text="${initialPrice}"></td>
+          <td th:unless = "${maxBid==null}" th:text="${maxBid.bidValue}"></td>
+          <td th:if="${maxBid==null}" th:text="${initialPrice}"></td>
 
           <td th:text="${timeLeftFormatted}"></td>
         </tr>
@@ -88,8 +88,20 @@
   </form>
 </div>
 
+<div th:if = "${bidform == 'false'}">
+  <h2>Do you want to close this auction?</h2>
+  <form action="CloseAuction" method="POST">
+    <input type="hidden" name="idAuction" th:value="${auction.idAuction}" />
+    <button type="submit">Close auction</button>
+  </form>
+</div>
+
 <div th:if="${msgBid != null}">
   <p th:text="${msgBid}"></p>
+</div>
+
+<div th:if="${closeMsg != null}">
+  <p th:text="${closeMsg}" class="error"></p>
 </div>
 
 <div class="logout-button">
