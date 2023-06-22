@@ -142,6 +142,7 @@
 		            <label th:for="${'image-' + image}">
 		                <input type="checkbox" th:id="${'image-' + image}" th:name="selectedImages" th:value="${image}">
 		                <img th:src="@{'/images/' + ${image}}" th:alt="${'Immagine ' + image}" width="300" height="200">
+		                
 		            </label>
 		        </div>
 	        </div>

@@ -154,7 +154,6 @@ public class GoToSell extends HttpServlet {
         	}
         	
         	 
-        	
         	if(!imageList.isEmpty()) {
         		ctx.setVariable("imageList", imageList1);
         	} else {

@@ -53,11 +53,13 @@ public class AddArticle extends HttpServlet{
 		//String shortDir = "/images";
 		String userHome = System.getProperty("user.home");
         String pathString = userHome + "/git/TIW-project-2023-pure-HTML-Polverini-Ye/TIW-project-2023-pure-HTML-Polverini-Ye/src/main/webapp/images";
-        String pathString1 = userHome + "/git/TIW-project-2023-pure-HTML-Polverini-Ye/TIW-project-2023-pure-HTML-Polverini-Ye";
+        //String pathString1 = userHome + "/Desktop/images";/*"/git/TIW-project-2023-pure-HTML-Polverini-Ye/TIW-project-2023-pure-HTML-Polverini-Ye";*/
         Path path = Paths.get(pathString);
+        //Path path1 = Paths.get(pathString1);
 		//System.out.println("Webapp path: " + webappPath);
 
 		String uploadDirectory = path.toString();
+		//String uploadDirectory1 = path1.toString();
 	    //String filePath = null;
 	    //String shortFilePath = null;
 	    String fileName = null;
@@ -75,30 +77,36 @@ public class AddArticle extends HttpServlet{
 
 	    try {
 	        Part filePart = request.getPart("imageToUpload"); // riceve la image part dalla richiesta
-	        fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName(); // estrae il nome
-	        String fileExtension = getFileExtension(fileName);
-	        //response.getWriter().println(fileName+" "+ fileExtension);
+	        if (filePart.getSize() == 0) {
+	        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "no file uploaded" );
 
-	        // Check if the file extension is allowed
-	        if (isAllowedExtension(fileExtension)) {
-	            //filePath = uploadDirectory + File.separator + fileName;
-	            //shortFilePath = shortDir+ File.separator + fileName;
-	            //response.getWriter().println(filePath);
-
-	            // salvataggio del file nella cartella images
-	            
-	            //response.getWriter().println(uploadDirectory);
-	            try (InputStream inputStream = filePart.getInputStream()) {
-	                File file = new File(uploadDirectory, fileName);
-	                Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-	            }
-	            
-	            //response.getWriter().println("File uploaded successfully!");
-	            
-	        } else {
-	        	
-	            //response.getWriter().println("Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+	            return; // Termina l'esecuzione del metodo se il file è nullo
 	        }
+		        fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName(); // estrae il nome
+		        String fileExtension = getFileExtension(fileName);
+		        //response.getWriter().println(fileName+" "+ fileExtension);
+	
+		        // Check if the file extension is allowed
+		        if (isAllowedExtension(fileExtension)) {
+		            //filePath = uploadDirectory + File.separator + fileName;
+		            //shortFilePath = shortDir+ File.separator + fileName;
+		            //response.getWriter().println(filePath);
+	
+		            // salvataggio del file nella cartella images
+		            
+		            //response.getWriter().println(uploadDirectory);
+		            try (InputStream inputStream = filePart.getInputStream()) {
+		                File file = new File(uploadDirectory, fileName);
+		                Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		            }
+		            
+		            //response.getWriter().println("File uploaded successfully!");
+		            
+		        } else {
+		        	
+		            response.getWriter().println("Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+		        }
+	        
 	    } catch (Exception ex) {
 	    	
 	        response.getWriter().println("Error uploading file: " + ex.getMessage());
@@ -110,24 +118,41 @@ public class AddArticle extends HttpServlet{
 	    String articlePrice = request.getParameter("price");
 	    User user = (User) request.getSession().getAttribute("user");
 	    
+	    if(articleName.length()<=0) {
+	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "non hai inserito il nome dell'articolo che vuoi aggiungere.");
+	    	return;
+	    }
+	    if(articleDesc.length()<=0) {
+	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "non hai inserito la descrizione dell'articolo che vuoi aggiungere.");
+	    }
+	    
 	    if (articlePrice != null && !articlePrice.isEmpty()) {
 	        try {
 	            price = Float.parseFloat(articlePrice);
 	        } catch (NumberFormatException e) {
-	            response.getWriter().println("Il valore inserito non è un numero valido.");
+	            //response.getWriter().println("Il valore inserito non è un numero valido.");
+	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il valore inserito non è un numero valido.");
+	            return;
 	        }
 	    } else {
-	        response.getWriter().println("Il numero non è stato fornito nella richiesta.");
+	        //response.getWriter().println("Il numero non è stato fornito nella richiesta.");
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il prezzo non è stato fornito nella richiesta.");
+	        return;
 	    }
 	    
 	    ArticleDAO article = new ArticleDAO(connection);
 	    //PER CONTROLLARE IN FUTURO IL PATH DOVE VENGONO SALVATE LE IMMAGINI, COMMENTARE DAL TRY FINO A DOPO LA SENDREDIRECT E DECOMMENTARE LE RESPONSE.GETWRITER()
+	   System.out.println(fileName);
 	   try {
-		   Part filePart = request.getPart("imageToUpload"); 
-	       fileName = filePart.getSubmittedFileName(); 
+		   //Part filePart = request.getPart("imageToUpload"); 
+		   
+	       //fileName = filePart.getSubmittedFileName(); 
 	       String fileExtension = getFileExtension(fileName);
 	       if(isAllowedExtension(fileExtension)) {
 	       	article.createArticle(articleName, articleDesc, price, fileName,user.getUserMail());
+	       } else {
+	    	   response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+	    	   return;
 	       }
 		} catch (SQLException e) {
 			e.printStackTrace();
