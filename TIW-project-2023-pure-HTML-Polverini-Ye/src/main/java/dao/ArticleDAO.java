@@ -298,6 +298,30 @@ public class ArticleDAO {
         }
         return article;
     }
+    
+    public boolean putBackArticles(int idAuction) {
+        String query = "UPDATE dbaste.articles SET idAuction = NULL WHERE idAuction = ?";
+        PreparedStatement pStatement = null;
+
+        try {
+            pStatement = connection.prepareStatement(query);
+            pStatement.setInt(1, idAuction);
+            pStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (pStatement != null) {
+                    pStatement.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
 
 }
 

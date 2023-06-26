@@ -91,7 +91,7 @@ public class CloseAuction extends HttpServlet {
 
                 if(maxBid==null){
                     ArrayList<Article> articles = articleDAO.findArticlesListByIdAuction(idAuction);
-                    auctionDAO.putBackArticles(idAuction);
+                    articleDAO.putBackArticles(idAuction);
                     closeMsg = "Auction closed successfully. It had No bids so all articles will be put back: ";
                     for (Article article : articles) {
                         closeMsg += " " + article.getArticleName();

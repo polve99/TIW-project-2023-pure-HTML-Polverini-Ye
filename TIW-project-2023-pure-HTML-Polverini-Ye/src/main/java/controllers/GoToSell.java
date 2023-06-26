@@ -144,18 +144,20 @@ public class GoToSell extends HttpServlet {
     		}
         	List<String> imageList = new ArrayList<>();
         	for (String image : imageList1) {
-        		String userHome = System.getProperty("user.home");
-                String pathString = userHome + "/git/TIW-project-2023-pure-HTML-Polverini-Ye/TIW-project-2023-pure-HTML-Polverini-Ye/src/main/webapp";
-                Path imagePath = Paths.get(pathString);
-        		//System.out.println("Webapp path: " + webappPath);
-
-        		String imageDirectory = imagePath+image;
-        		imageList.add(imageDirectory);
+        		try {
+        			ArticleDAO article = new ArticleDAO(connection);
+        			String name = article.findArticleByImage(image).getArticleName();
+        			imageList.add(name);
+        		} catch (SQLException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+        		}
         	}
         	
         	 
-        	if(!imageList.isEmpty()) {
+        	if(!imageList1.isEmpty()) {
         		ctx.setVariable("imageList", imageList1);
+        		ctx.setVariable("imageListName", imageList);
         	} else {
                 ctx.setVariable("NoArticle", "You have no articles at this time.");
                 //prova

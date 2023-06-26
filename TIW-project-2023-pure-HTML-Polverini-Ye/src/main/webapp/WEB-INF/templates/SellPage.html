@@ -8,21 +8,24 @@
 </head>
 
 <body>
-    <h1>BidWars' Sell Page</h1>
-    <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all your open auctions!</h2>
+    <h1 align="center">BidWars' Sell Page</h1>
+    <h2 align="center">Hi <span th:text="${session.user.name}"></span>, here's a list of all your open auctions!</h2>
 
 	<div th:if="${errorString != null}">
     	<p th:text="${errorString}" class="error"></p>
 	</div>
+	<div class = "prev">
+		<a th:href="@{/GoToPreviousPage}"> <img th:src = "@{/previmg/left.png}" alt = "prev page"  width="35" height="35"></a>
+	</div>
 	
     <form>
         <fieldset>
-            <div class="container">
+            <div class="container" >
                 <div class="row">
-                    <h1>List of your open auctions</h1>
+                    <h1 align="center">List of your open auctions</h1>
                     <!--  <p th:text="${auctionInfoListOpen.isEmpty() ? 'No open auctions available' : ''}"></p> -->
                     <div th:if = "${auctionInfoListOpen.isEmpty()}">
-                    	<p th:text = "${NoOpenAuctionsMsg}"></p>                    
+                    	<p align="center" th:text = "${NoOpenAuctionsMsg}"></p>                    
                     </div>
                     <div th:unless = "${auctionInfoListOpen.isEmpty()}">
 	                    <table th:else class="table">
@@ -50,7 +53,7 @@
 	                                    </ul>
 	                                </td>
 	                                <td th:text="${auctionInfo['maxBidValue']}"></td>
-                            		<td th:text="${auctionInfo['initialPrice']}"></td>
+                            		
                             		<td th:text = "${auctionInfo['minRise']}"></td>
 	                                <td>
 	                                    <span th:text="${auctionInfo['timeLeftFormatted']}"></span>
@@ -65,14 +68,14 @@
         <p th:class="error" th:text="${errorMsg}"></p>
     </form>
 
-    <h2>Hi <span th:text="${session.user.name}"></span>, here's a list of all your closed auctions</h2>
+    <h2 align="center">Hi <span th:text="${session.user.name}"></span>, here's a list of all your closed auctions</h2>
 
     <form>
         <fieldset>
             <div class="container">
                 <div class="row">
-                    <h1>List of your closed auctions</h1>
-                    <p th:text="${auctionInfoListWon.isEmpty() ? 'You haven\'t won any auctions.' : ''}"></p>
+                    <h1 align="center">List of your closed auctions</h1>
+                    <p align="center" th:text="${auctionInfoListWon.isEmpty() ? 'You haven\'t won any auctions.' : ''}"></p>
                     <div>
                     	<p th:text = "${NoWonAuctionsMsg}"></p>
                     </div>
@@ -87,7 +90,7 @@
                         </thead>
                         <tbody>
                             <tr th:if="${auctionInfoListWon.isEmpty()}">
-                                <td colspan="3">You haven't won any auctions.</td>
+                                <td colspan="3" align="center">You haven't won any auctions.</td>
                             </tr>
                             <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
                                 <td th:text="${auctionInfoListWon['idAuction']}"></td>
@@ -107,7 +110,7 @@
         </fieldset>
     </form>
     
-    <form action = "AddArticle" method = "POST" enctype="multipart/form-data">
+    <form action = "AddArticle" method = "POST" enctype="multipart/form-data" align="center">
     	<h2>Do you want to add an article?<br>here's a form for adding articles for your future auctions</h2>
     	<fieldset>
 		   	<label for="articleName">Enter the Article Name:</label>
@@ -127,18 +130,20 @@
     
 	<div th:if = "${!imageList.isEmpty()}">
 	<form action="CreateAuction" method="POST">
-	    <h2>Do you want to create an auction?</h2>
+	    <h2 align=center >Do you want to create an auction?</h2>
 	    <fieldset>
-	        <label for="expirationDate">Select how long you want the Auction to last (min 1, max 20):</label>
-	        <!--<input type="date" id="expirationDate" name="expirationDate"> -->
-	        <input type="number" name = "expirationDate" id = "expirationDate" step = "1" min ="1" max = "20" required>
-	        <br>
-	        <label for="minRise">Select a Minimun Rise</label>
-	        <input type="number" name="minRise" id="price" step="1" min="1" required>
-	        <label for="imageSelect">Select one or more Articles:</label>
+	    	<div align="center">
+		        <label for="expirationDate">Select how long you want the Auction to last (min 1, max 20):</label>
+		        <!--<input type="date" id="expirationDate" name="expirationDate"> -->
+		        <input type="number" name = "expirationDate" id = "expirationDate" step = "1" min ="1" max = "20" required>
+		        <br>
+		        <label for="minRise">Select a Minimun Rise</label>
+		        <input type="number" name="minRise" id="price" step="1" min="1" required>
+	        	<label for="imageSelect">Select one or more Articles:</label>
+	        </div>
 	        <div>
-		        <div th:each="image : ${imageList}">
-		        	<p th:text="@{'/images/'+${image}}"></p>
+		        <div th:each="image, status  : ${imageList}">
+		        	<p th:text="${imageListName[status.index]}"></p>
 		            <label th:for="${'image-' + image}">
 		                <input type="checkbox" th:id="${'image-' + image}" th:name="selectedImages" th:value="${image}">
 		                <img th:src="@{'/images/' + ${image}}" th:alt="${'Immagine ' + image}" width="300" height="200">

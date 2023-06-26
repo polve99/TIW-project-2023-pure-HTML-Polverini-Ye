@@ -13,7 +13,7 @@ public class User {
     private Date subscription_date;
     private String telephone;
     private String address;
-    private List<String> navigationHistory = new ArrayList<>(); //CANCELLABILE
+    private List<String> navigationHistory = new ArrayList<>();
 
     public User() {
         super();

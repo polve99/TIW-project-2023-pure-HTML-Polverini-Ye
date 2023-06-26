@@ -11,6 +11,10 @@
 <h1>BidWars' Open Auction Page</h1>
 <h2>Hi <span th:text="${user.name}"></span>, here are the details of the open auction '<span th:text="${session.idAuction}"></span>', you are looking at:</h2>
 
+<div class = "prev">
+		<a th:href="@{/GoToPreviousPage}"> <img th:src = "@{/previmg/left.png}" alt = "prev page"  width="35" height="35"></a>
+</div>
+
 <fieldset>
   <div class="container">
     <div class="row">
