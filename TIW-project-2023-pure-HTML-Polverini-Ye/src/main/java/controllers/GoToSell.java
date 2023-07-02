@@ -122,7 +122,7 @@ public class GoToSell extends HttpServlet {
                 if(auctionClosedInfos.get(0)==null) {
                 	auctionInfo.put("maxBidValue", "No bidders.");
                 } else {
-                	auctionInfo.put("maxBidValue", auctionClosedInfos.get(0));
+                	auctionInfo.put("maxBidValue", ((Bid) auctionClosedInfos.get(0)).getBidValue());
                 }
                 
                 auctionInfo.put("articles", auctionClosedInfos.get(1));

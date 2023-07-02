@@ -21,7 +21,20 @@ public class GoToPreviousPage extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<String> navigationHistory = ((User) request.getSession().getAttribute("user")).getNavigationHistory();
-		String previousPage = navigationHistory.get(navigationHistory.size() - 2);
+		String previousPage = new String();
+		String actualPage = navigationHistory.get(navigationHistory.size() - 1);
+		int i = navigationHistory.size();
+		while (i > 0) {
+			previousPage = navigationHistory.get(1-1);
+			if (previousPage.equals(actualPage)) {
+				navigationHistory.remove(previousPage);
+				i--;
+			} else {
+				i = 0;
+			}
+			
+			
+		}
 		navigationHistory.remove(navigationHistory.get(navigationHistory.size() - 1));
 		((User) request.getSession().getAttribute("user")).setNavigationHistory(navigationHistory);
 		String newPageToGo;
