@@ -23,11 +23,11 @@
         <form action = "Login" method = "post" >
             <fieldset>
                 <p>
-                    E-mail: <input type="email" id="email" name="userMail" required/>
+                    E-mail: <input type="text" id="email" name="userMail" required/>
                     <span th:if="${emailErrorMessage != null}" th:text="${emailErrorMessage}" class="error"></span>
                 </p>
                 <p>
-                    Password: <input type="password" id="password" name="password" required/>
+                    Password: <input type="text" id="password" name="password" required/>
                     <span th:if="${passwordErrorMessage != null}" th:text="${passwordErrorMessage}" class="error"></span>
                 </p>
                 <p>
