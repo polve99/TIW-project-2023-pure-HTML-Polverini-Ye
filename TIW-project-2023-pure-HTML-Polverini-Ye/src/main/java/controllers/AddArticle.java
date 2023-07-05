@@ -53,13 +53,13 @@ public class AddArticle extends HttpServlet{
 		//String shortDir = "/images";
 		String userHome = System.getProperty("user.home");
         String pathString = userHome + "/git/TIW-project-2023-pure-HTML-Polverini-Ye/TIW-project-2023-pure-HTML-Polverini-Ye/src/main/webapp/images";
-        //String pathString1 = userHome + "/Desktop/images";/*"/git/TIW-project-2023-pure-HTML-Polverini-Ye/TIW-project-2023-pure-HTML-Polverini-Ye";*/
+        String pathString1 = userHome + "/git/TIW-project-2023-RIA-Polverini-Ye/TIW-project-2023-RIA-Polverini-Ye/src/main/webapp/images";
         Path path = Paths.get(pathString);
-        //Path path1 = Paths.get(pathString1);
+        Path path1 = Paths.get(pathString1);
 		//System.out.println("Webapp path: " + webappPath);
 
 		String uploadDirectory = path.toString();
-		//String uploadDirectory1 = path1.toString();
+		String uploadDirectory1 = path1.toString();
 	    //String filePath = null;
 	    //String shortFilePath = null;
 	    String fileName = null;
@@ -74,13 +74,18 @@ public class AddArticle extends HttpServlet{
 	    if (!dir.exists()) {
 	        dir.mkdirs();
 	    }
+	    
+	    File dir1 = new File(uploadDirectory1);
+	    if (!dir1.exists()) {
+	        dir1.mkdirs();
+	    }
 
 	    try {
 	        Part filePart = request.getPart("imageToUpload"); // riceve la image part dalla richiesta
 	        if (filePart.getSize() == 0) {
 	        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "no file uploaded" );
 
-	            return; // Termina l'esecuzione del metodo se il file è nullo
+	            return;
 	        }
 		        fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName(); // estrae il nome
 		        String fileExtension = getFileExtension(fileName);
@@ -93,18 +98,24 @@ public class AddArticle extends HttpServlet{
 		            //response.getWriter().println(filePath);
 	
 		            // salvataggio del file nella cartella images
-		            
-		            //response.getWriter().println(uploadDirectory);
-		            try (InputStream inputStream = filePart.getInputStream()) {
-		                File file = new File(uploadDirectory, fileName);
+		        	File file = new File(uploadDirectory, fileName);
+		        	File file1 = new File(uploadDirectory1, fileName);
+		        	new Thread(() ->{
+		        		try (InputStream inputStream = filePart.getInputStream()) { 
 		                Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-		            }
+		                Files.copy(inputStream, file1.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		            } catch (IOException e) {
+						e.printStackTrace();
+					}}).start();
+		            //response.getWriter().println(uploadDirectory);
+		            
 		            
 		            //response.getWriter().println("File uploaded successfully!");
 		            
 		        } else {
 		        	
-		            response.getWriter().println("Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+		            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+		            return;
 		        }
 	        
 	    } catch (Exception ex) {
@@ -124,18 +135,21 @@ public class AddArticle extends HttpServlet{
 	    }
 	    if(articleDesc.length()<=0) {
 	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "non hai inserito la descrizione dell'articolo che vuoi aggiungere.");
+	    	return;
 	    }
 	    
 	    if (articlePrice != null && !articlePrice.isEmpty()) {
 	        try {
 	            price = Float.parseFloat(articlePrice);
+	            if(price < 0) {
+	            	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "il prezzo deve essere maggiore o uguale a zero");
+	            	return;
+	            }
 	        } catch (NumberFormatException e) {
-	            //response.getWriter().println("Il valore inserito non è un numero valido.");
 	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il valore inserito non è un numero valido.");
 	            return;
 	        }
 	    } else {
-	        //response.getWriter().println("Il numero non è stato fornito nella richiesta.");
 	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il prezzo non è stato fornito nella richiesta.");
 	        return;
 	    }
@@ -151,7 +165,7 @@ public class AddArticle extends HttpServlet{
 	       if(isAllowedExtension(fileExtension)) {
 	       	article.createArticle(articleName, articleDesc, price, fileName,user.getUserMail());
 	       } else {
-	    	   response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
+	    	   response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid file type. Only JPG, JPEG and PNG files are allowed.");
 	    	   return;
 	       }
 		} catch (SQLException e) {
@@ -160,7 +174,14 @@ public class AddArticle extends HttpServlet{
 			return;
 		}
 	   
-	    response.sendRedirect("GoToSell");
+	   response.sendRedirect("GoToSell");
+	   
+	   /*try {
+		    Thread.sleep(2000); // Metti in pausa l'esecuzione per un secondo (1000 millisecondi)
+		    response.sendRedirect("GoToSell");
+		} catch (Exception ex) {
+			//response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error, retry later");
+		}*/
 	}
 
 	//TODO: INUTILE?
@@ -186,7 +207,7 @@ public class AddArticle extends HttpServlet{
 
 	// controlla che l'estensione vada bene
 	private boolean isAllowedExtension(String fileExtension) {
-	    String[] allowedExtensions = {"jpg", "jpeg", "png", "gif"};
+	    String[] allowedExtensions = {"jpg", "jpeg", "png"};
 	    for (String ext : allowedExtensions) {
 	        if (ext.equalsIgnoreCase(fileExtension)) {
 	            return true;

@@ -75,7 +75,7 @@
             <div class="container">
                 <div class="row">
                     <h1 align="center">List of your closed auctions</h1>
-                    <p align="center" th:text="${auctionInfoListWon.isEmpty() ? 'You haven\'t won any auctions.' : ''}"></p>
+                    <!-- x<p align="center" th:text="${auctionInfoListWon.isEmpty() ? 'You haven\'t any auctions closed.' : ''}"></p> -->
                     <div>
                     	<p th:text = "${NoWonAuctionsMsg}"></p>
                     </div>
@@ -90,7 +90,7 @@
                         </thead>
                         <tbody>
                             <tr th:if="${auctionInfoListWon.isEmpty()}">
-                                <td colspan="3" align="center">You haven't won any auctions.</td>
+                                <td colspan="3" align="center">You haven't any own auctions closed.</td>
                             </tr>
                             <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
                                 <td th:text="${auctionInfoListWon['idAuction']}"></td>
@@ -110,7 +110,7 @@
         </fieldset>
     </form>
     
-    <form action = "AddArticle" method = "POST" enctype="multipart/form-data" align="center">
+    <form action = "AddArticle" method = "POST" enctype="multipart/form-data" >
     	<h2>Do you want to add an article?<br>here's a form for adding articles for your future auctions</h2>
     	<fieldset>
 		   	<label for="articleName">Enter the Article Name:</label>

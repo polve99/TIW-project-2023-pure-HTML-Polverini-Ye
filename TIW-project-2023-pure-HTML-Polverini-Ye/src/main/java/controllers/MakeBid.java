@@ -86,7 +86,7 @@ public class MakeBid extends HttpServlet {
                 }
 
                 if(maxBid == null){
-                    if(bidValue <= auction.getInitialPrice()) {
+                    if(bidValue < auction.getInitialPrice()) {
                         isValid = false;
                         request.setAttribute("msgBid", "Bid value too low (must be greater than/equal the initial price (" + auction.getInitialPrice() + "))");
                     }

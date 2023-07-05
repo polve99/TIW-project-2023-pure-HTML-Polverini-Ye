@@ -61,10 +61,21 @@ public class CreateAuction extends HttpServlet{
     	
     	int i = 0;
     	float initialPrice = 0;
+    	int daysToAdd = 0;
     	
     	LocalDateTime dateTime = LocalDateTime.now();
-    	
-        int daysToAdd = Integer.parseInt(request.getParameter("expirationDate")); 
+    	try {
+    		daysToAdd = Integer.parseInt(request.getParameter("expirationDate")); 
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the number inserted doesn't have the right format");
+    		return;
+    	}
+        
+        if (daysToAdd < 1 || daysToAdd > 20) {
+        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the number inserted doesn't respect the range of possibilities proposed");
+    		return;
+        }
 
         LocalDateTime newDateTime = dateTime.plusDays(daysToAdd); 
         Timestamp time = Timestamp.valueOf(newDateTime);
@@ -73,7 +84,30 @@ public class CreateAuction extends HttpServlet{
     	
     	
         String minRise = request.getParameter("minRise");
+        float rise = 0;
+        try {
+        	rise = Float.parseFloat(minRise);
+        	if (rise <= 0) {
+        		response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise must be greater than zero");
+        		return;
+        	}
+        } catch(Exception e) {
+        	e.printStackTrace();
+    		response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise inserted doesn't have the right format");
+    		return;
+        }
+        
+        if(minRise.length()<=0 || minRise.isEmpty()) {
+        	response.sendError(HttpServletResponse.SC_BAD_REQUEST,"invalid minimum rise");
+        	return;
+        }
+        
         String[] selectedImages = request.getParameterValues("selectedImages");
+        
+        if(selectedImages[0] == null) {
+        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "no articles selected");
+        	return;
+        }
         
         AuctionDAO auctionDAO = new AuctionDAO(connection);
         ArticleDAO articleDAO = new ArticleDAO(connection);
@@ -97,7 +131,7 @@ public class CreateAuction extends HttpServlet{
         }
         
         try {
-			aucId = auctionDAO.createAuction(initialPrice, Float.parseFloat(minRise), time, user.getUserMail());
+			aucId = auctionDAO.createAuction(initialPrice, rise, time, user.getUserMail());
 		} catch (NumberFormatException | SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
