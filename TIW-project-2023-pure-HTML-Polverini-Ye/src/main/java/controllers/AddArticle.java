@@ -130,11 +130,11 @@ public class AddArticle extends HttpServlet{
 	    User user = (User) request.getSession().getAttribute("user");
 	    
 	    if(articleName.length()<=0) {
-	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "non hai inserito il nome dell'articolo che vuoi aggiungere.");
+	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing name in the article you want to add");
 	    	return;
 	    }
 	    if(articleDesc.length()<=0) {
-	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "non hai inserito la descrizione dell'articolo che vuoi aggiungere.");
+	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing description in the article you want to add");
 	    	return;
 	    }
 	    
@@ -142,15 +142,15 @@ public class AddArticle extends HttpServlet{
 	        try {
 	            price = Float.parseFloat(articlePrice);
 	            if(price < 0) {
-	            	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "il prezzo deve essere maggiore o uguale a zero");
+	            	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "price must be greater or equal to zero");
 	            	return;
 	            }
 	        } catch (NumberFormatException e) {
-	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il valore inserito non è un numero valido.");
+	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Price in input is not a valid number");
 	            return;
 	        }
 	    } else {
-	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Il prezzo non è stato fornito nella richiesta.");
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Price is null");
 	        return;
 	    }
 	    
