@@ -9,7 +9,6 @@
 
 <body>
     <h1 align="center">BidWars' Sell Page</h1>
-    <h2 align="center">Hi <span th:text="${session.user.name}"></span>, here's a list of all your open auctions!</h2>
 
 	<div th:if="${errorString != null}">
     	<p th:text="${errorString}" class="error"></p>
@@ -23,7 +22,6 @@
             <div class="container" >
                 <div class="row">
                     <h1 align="center">List of your open auctions</h1>
-                    <!--  <p th:text="${auctionInfoListOpen.isEmpty() ? 'No open auctions available' : ''}"></p> -->
                     <div th:if = "${auctionInfoListOpen.isEmpty()}">
                     	<p align="center" th:text = "${NoOpenAuctionsMsg}"></p>                    
                     </div>
@@ -68,45 +66,41 @@
         <p th:class="error" th:text="${errorMsg}"></p>
     </form>
 
-    <h2 align="center">Hi <span th:text="${session.user.name}"></span>, here's a list of all your closed auctions</h2>
-
     <form>
         <fieldset>
             <div class="container">
                 <div class="row">
                     <h1 align="center">List of your closed auctions</h1>
-                    <!-- x<p align="center" th:text="${auctionInfoListWon.isEmpty() ? 'You haven\'t any auctions closed.' : ''}"></p> -->
-                    <div>
-                    	<p th:text = "${NoWonAuctionsMsg}"></p>
+                    <div th:if = "${auctionInfoListWon.isEmpty()}">
+                    	<p align="center" th:text = "${NoWonAuctionsMsg}"></p>                    
                     </div>
 
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Auction Id</th>
-                                <th>Articles</th>
-                                <th>Winning bid</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:if="${auctionInfoListWon.isEmpty()}">
-                                <td colspan="3" align="center">You haven't any own auctions closed.</td>
-                            </tr>
-                            <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
-                                <td>
-	                                <a th:href="@{/GoToAuction(idAuction=${auctionInfoListWon['idAuction']})}" th:text="${auctionInfoListWon['idAuction']}"></a>
-	                            </td>
-                                <td>
-                                    <ul>
-                                        <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>
-                                    </ul>
-                                </td>
-                                
-                                <td th:text="${auctionInfoListWon['maxBidValue']}"></td>
-                                
-                            </tr>
-                        </tbody>
-                    </table>
+					<div th:unless = "${auctionInfoListWon.isEmpty()}">
+	                    <table class="table">
+	                        <thead>
+	                            <tr>
+	                                <th>Auction Id</th>
+	                                <th>Articles</th>
+	                                <th>Winning bid</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <tr th:each="auctionInfoListWon : ${auctionInfoListWon}">
+	                                <td>
+		                                <a th:href="@{/GoToAuction(idAuction=${auctionInfoListWon['idAuction']})}" th:text="${auctionInfoListWon['idAuction']}"></a>
+		                            </td>
+	                                <td>
+	                                    <ul>
+	                                        <li th:each="article : ${auctionInfoListWon['articles']}" th:text="${article.articleName}"></li>
+	                                    </ul>
+	                                </td>
+	                                
+	                                <td th:text="${auctionInfoListWon['maxBidValue']}"></td>
+	                                
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                </div>    
                 </div>
             </div>
         </fieldset>
@@ -119,7 +113,6 @@
 		   	<input type="text" maxlength="20" name="articleName" id ="articleName" required>
 		   	<br>
 		    <label for="articleDesc">Enter the Article Description:</label>
-		   	<!--<textarea rows="5" cols="51" name="articleDesc"></textarea> -->
 		   	<input type="text" maxlength="255" name="articleDesc" id ="articleDesc">
 		   	<br>
 		   	<label for="price">Enter the Price:</label>
@@ -136,7 +129,6 @@
 	    <fieldset>
 	    	<div align="center">
 		        <label for="expirationDate">Select how long you want the Auction to last (min 1, max 20):</label>
-		        <!--<input type="date" id="expirationDate" name="expirationDate"> -->
 		        <input type="number" name = "expirationDate" id = "expirationDate" step = "1" min ="1" max = "20" required>
 		        <br>
 		        <label for="minRise">Select a Minimun Rise</label>

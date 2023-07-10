@@ -68,15 +68,6 @@ public class Registration extends HttpServlet {
             request.setAttribute("emailErrorMessage", "Invalid email. Email must be between 5 and 50 characters and have a valid format (e.g., email@mail.com)");
         }
 
-        UserDAO userDAO = new UserDAO(connection);
-        try {
-            if(userDAO.isUserMailInDB(userMail)) {
-                request.setAttribute("emailErrorMessage", "Email already in use");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
         if (passw==null || passw.length() < 8 || passw.length() > 50) {
             request.setAttribute("passwordErrorMessage", "Password must be between 8 and 50 characters");
         }
@@ -96,6 +87,16 @@ public class Registration extends HttpServlet {
                 passw.equals(repeatedPassword) &&
                 address.length() >= 1 && address.length() <= 50) {
             isValid = true;
+        }
+        
+        UserDAO userDAO = new UserDAO(connection);
+        try {
+            if(userDAO.isUserMailInDB(userMail)) {
+                request.setAttribute("emailErrorMessage", "Email already in use");
+                isValid=false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         if (isValid) {

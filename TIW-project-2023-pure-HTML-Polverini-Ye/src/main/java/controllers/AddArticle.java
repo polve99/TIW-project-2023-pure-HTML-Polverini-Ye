@@ -21,12 +21,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Part;
 
-import org.thymeleaf.TemplateEngine;
-
 import dao.ArticleDAO;
 import beans.User;
 import utilis.ConnectionHandler;
-import utilis.ThymeleafTemplateEngineCreator;
 
 @WebServlet("/AddArticle")
 @MultipartConfig
@@ -166,7 +163,6 @@ public class AddArticle extends HttpServlet{
 	   
 	}
 
-	// prende l'estensione del file
 	private String getFileExtension(String fileName) {
 	    int dotIndex = fileName.lastIndexOf(".");
 	    if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
@@ -175,7 +171,6 @@ public class AddArticle extends HttpServlet{
 	    return "";
 	}
 
-	// controlla che l'estensione vada bene
 	private boolean isAllowedExtension(String fileExtension) {
 	    String[] allowedExtensions = {"jpg", "jpeg", "png"};
 	    for (String ext : allowedExtensions) {
