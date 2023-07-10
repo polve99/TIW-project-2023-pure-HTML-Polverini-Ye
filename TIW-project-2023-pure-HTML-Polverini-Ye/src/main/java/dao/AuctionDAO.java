@@ -388,7 +388,6 @@ public class AuctionDAO {
     }
 
     public ArrayList<Object> getAuctionClosedInfosForTable(Auction auction) throws SQLException{
-        //if(isAuctionOpen(auction.getIdAuction())) return null;
     	if(auction.isOpen()) return null;
         //l'asta deve essere chiusa per poter calcolare i dati finali
 

@@ -1,8 +1,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -64,13 +62,10 @@ public class GoToSell extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
 
-
         List<Auction> auctionListOpen = new ArrayList<>();
 
         try {
-        	
-         auctionListOpen = auctionDAO.getAllOpenAuctionsByUser(user.getUserMail());
-         
+        	auctionListOpen = auctionDAO.getAllOpenAuctionsByUser(user.getUserMail());
         } catch (SQLException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in finding auctions");
@@ -153,7 +148,6 @@ public class GoToSell extends HttpServlet {
         			e.printStackTrace();
         		}
         	}
-        	
         	 
         	if(!imageList1.isEmpty()) {
         		ctx.setVariable("imageList", imageList1);
@@ -196,6 +190,11 @@ public class GoToSell extends HttpServlet {
 
     private String formatTimeLeft(Timestamp expirationDateTime) {
         long timeLeftMillis = expirationDateTime.getTime() - System.currentTimeMillis();
+        
+        if(timeLeftMillis<0) {
+        	String msg = "expired";
+        	return msg;
+        }
 
         long seconds = timeLeftMillis / 1000;
         long days = seconds / (24 * 60 * 60);

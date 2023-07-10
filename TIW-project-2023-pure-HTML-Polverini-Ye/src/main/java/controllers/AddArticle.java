@@ -1,4 +1,5 @@
 package controllers;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +10,6 @@ import java.nio.file.StandardCopyOption;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
@@ -21,9 +21,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.Part;
 
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import dao.ArticleDAO;
 import beans.User;
@@ -36,7 +34,6 @@ public class AddArticle extends HttpServlet{
 	
 	private static final long serialVersionUID = 1L;
     private Connection connection = null;
-    private TemplateEngine templateEngine = null;
 
     public AddArticle() {
         super();
@@ -46,7 +43,6 @@ public class AddArticle extends HttpServlet{
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
         connection = ConnectionHandler.getConnection(servletContext);
-        templateEngine = ThymeleafTemplateEngineCreator.getTemplateEngine(servletContext);
     }
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -65,10 +61,6 @@ public class AddArticle extends HttpServlet{
 	    //String shortFilePath = null;
 	    String fileName = null;
 	    //System.out.println(uploadDirectory);
-	    
-	    
-	    
-	    
 
 	    // crea nuova directory se non esiste
 	    File dir = new File(uploadDirectory);
@@ -85,7 +77,6 @@ public class AddArticle extends HttpServlet{
 	        Part filePart = request.getPart("imageToUpload"); // riceve la image part dalla richiesta
 	        if (filePart.getSize() == 0) {
 	        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "no file uploaded" );
-
 	            return;
 	        }
 		        fileName = System.currentTimeMillis() + "_" + filePart.getSubmittedFileName(); // estrae il nome
@@ -109,18 +100,14 @@ public class AddArticle extends HttpServlet{
 						e.printStackTrace();
 					}}).start();
 		            //response.getWriter().println(uploadDirectory);
-		            
-		            
 		            //response.getWriter().println("File uploaded successfully!");
 		            
 		        } else {
-		        	
 		            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.");
 		            return;
 		        }
 	        
 	    } catch (Exception ex) {
-	    	
 	        response.getWriter().println("Error uploading file: " + ex.getMessage());
 	    }
 	
@@ -207,6 +194,4 @@ public class AddArticle extends HttpServlet{
 			return false;
 		}
     }
-	
-	
 }

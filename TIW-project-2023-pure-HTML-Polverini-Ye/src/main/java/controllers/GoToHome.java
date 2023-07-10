@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -39,9 +38,9 @@ public class GoToHome extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
-        List<String> newNavigationHistory = new ArrayList<>();    	//TODO: chiedere al carlone cosa serve sta roba e se serve
-        newNavigationHistory.add("GoToHome");						//TODO: chiedere al carlone cosa serve sta roba e se serve
-        user.setNavigationHistory(newNavigationHistory);			//TODO: chiedere al carlone cosa serve sta roba e se serve
+        List<String> newNavigationHistory = new ArrayList<>();
+        newNavigationHistory.add("GoToHome");
+        user.setNavigationHistory(newNavigationHistory);
         ServletContext servletContext = getServletContext();
         String path = "WEB-INF/templates/HomePage.html";
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());

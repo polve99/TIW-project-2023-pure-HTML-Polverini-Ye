@@ -24,7 +24,6 @@ public class GoToHomePage extends HttpServlet {
     private TemplateEngine templateEngine;
     private Connection connection = null;
 
-
     public GoToHomePage() {
         super();
         // TODO Auto-generated constructor stub

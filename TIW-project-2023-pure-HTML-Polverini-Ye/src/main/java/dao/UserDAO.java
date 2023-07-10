@@ -19,7 +19,6 @@ public class UserDAO {
         int rows = 0;
         User user = null;
         String query = "INSERT INTO dbaste.users (userMail, password, name, surname, telephone, address) VALUES (?, ?, ?, ?, ?, ?)";
-        //es su mySQL: INSERT INTO dbaste.users (usermail, password, name, surname, telephone, address) VALUES ('gy', 'ok', 'giu','ye',null, 'mi');
         PreparedStatement pStatement = null;
 
         try {
