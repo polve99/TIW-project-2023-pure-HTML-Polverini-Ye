@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -64,6 +65,12 @@ public class CreateAuction extends HttpServlet{
     	int daysToAdd = 0;
     	
     	LocalDateTime dateTime = LocalDateTime.now();
+    	
+    	if(!isNumber(request.getParameter("expirationDate"))) {
+        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the duration must be a number");
+    		return;
+        }
+    	
     	try {
     		daysToAdd = Integer.parseInt(request.getParameter("expirationDate")); 
     	} catch (Exception e) {
@@ -84,6 +91,11 @@ public class CreateAuction extends HttpServlet{
     	
     	
         String minRise = request.getParameter("minRise");
+        if(!isNumber(minRise)) {
+        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise must be a number");
+    		return;
+        }
+        
         float rise = 0;
         try {
         	rise = Float.parseFloat(minRise);
@@ -146,6 +158,15 @@ public class CreateAuction extends HttpServlet{
         
         response.sendRedirect("GoToSell");
         
+    }
+    
+    private boolean isNumber(String num) {
+    	Pattern numberPattern = Pattern.compile("\\d+");
+		if (num.length()>0) {
+			return numberPattern.matcher(num).matches();
+		} else {
+			return false;
+		}
     }
 
 }

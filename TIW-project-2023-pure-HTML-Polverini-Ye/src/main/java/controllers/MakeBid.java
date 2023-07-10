@@ -11,6 +11,8 @@ import utilis.ConnectionHandler;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -50,6 +52,13 @@ public class MakeBid extends HttpServlet {
             request.setAttribute("msgBid", "idAuction value null or empty");
         }
 
+        if(!isNumber(request.getParameter("bidValue"))) {
+        	isValid = false;
+            request.setAttribute("msgBid", "Bid value must be a number");
+        } else {
+        	request.getRequestDispatcher("/GoToAuction").forward(request, response);
+        }
+        
         float bidValue = Float.parseFloat(request.getParameter("bidValue"));
         if(request.getParameter("bidValue") == null || request.getParameter("bidValue").isEmpty() ){
             isValid = false;
@@ -116,5 +125,14 @@ public class MakeBid extends HttpServlet {
         }
 
         request.getRequestDispatcher("/GoToAuction").forward(request, response);
+    }
+    
+    private boolean isNumber(String num) {
+    	Pattern numberPattern = Pattern.compile("\\d+");
+		if (num.length()>0) {
+			return numberPattern.matcher(num).matches();
+		} else {
+			return false;
+		}
     }
 }

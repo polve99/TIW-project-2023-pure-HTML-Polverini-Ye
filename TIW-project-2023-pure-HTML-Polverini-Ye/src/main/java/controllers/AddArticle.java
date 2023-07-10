@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -133,9 +134,9 @@ public class AddArticle extends HttpServlet{
 	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing name in the article you want to add");
 	    	return;
 	    }
-	    if(articleDesc.length()<=0) {
-	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing description in the article you want to add");
-	    	return;
+	    if(!isNumber(articlePrice)) {
+	    	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "price must a number");
+        	return;
 	    }
 	    
 	    if (articlePrice != null && !articlePrice.isEmpty()) {
@@ -176,24 +177,6 @@ public class AddArticle extends HttpServlet{
 	   
 	   response.sendRedirect("GoToSell");
 	   
-	   /*try {
-		    Thread.sleep(2000); // Metti in pausa l'esecuzione per un secondo (1000 millisecondi)
-		    response.sendRedirect("GoToSell");
-		} catch (Exception ex) {
-			//response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error, retry later");
-		}*/
-	}
-
-	//TODO: INUTILE?
-	private String getFileName(Part part) {
-	    String contentDisposition = part.getHeader("content-disposition");
-	    String[] tokens = contentDisposition.split(";");
-	    for (String token : tokens) {
-	        if (token.trim().startsWith("filename")) {
-	            return token.substring(token.indexOf("=") + 2, token.length() - 1);
-	        }
-	    }
-	    return "";
 	}
 
 	// prende l'estensione del file
@@ -216,6 +199,14 @@ public class AddArticle extends HttpServlet{
 	    return false;
 	}
 	
+	private boolean isNumber(String num) {
+    	Pattern numberPattern = Pattern.compile("\\d+");
+		if (num.length()>0) {
+			return numberPattern.matcher(num).matches();
+		} else {
+			return false;
+		}
+    }
 	
 	
 }
