@@ -90,32 +90,49 @@ public class Registration extends HttpServlet {
         }
         
         UserDAO userDAO = new UserDAO(connection);
+        Connection connection = null;
         try {
+            connection = ConnectionHandler.getConnection(getServletContext());
+            connection.setAutoCommit(false);
+
             if(userDAO.isUserMailInDB(userMail)) {
                 request.setAttribute("emailErrorMessage", "Email already in use");
                 isValid=false;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
-        if (isValid) {
-            User user = null;
-            try {
-                user = userDAO.createUser(userMail, passw, name, surname, telephone, address);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                request.setAttribute("errorMsg", "Error in creating user. Please try again.");
+            if (isValid) {
+                User user = null;
+                try {
+                    user = userDAO.createUser(userMail, passw, name, surname, telephone, address);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    request.setAttribute("errorMsg", "Error in creating user. Please try again.");
+                }
+                HttpSession session = request.getSession(true);
+                session.setAttribute("user", user);
+                session.setAttribute("language", request.getLocale().getLanguage());
+                response.sendRedirect("GoToHome");
+                connection.commit();
+            } else {
+                String path = "WEB-INF/registration.html";
+                ServletContext servletContext = getServletContext();
+                final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+                templateEngine.process(path, ctx, response.getWriter());
             }
-            HttpSession session = request.getSession(true);
-            session.setAttribute("user", user);
-            session.setAttribute("language", request.getLocale().getLanguage());
-            response.sendRedirect("GoToHome");
-        } else {
-            String path = "WEB-INF/registration.html";
-            ServletContext servletContext = getServletContext();
-            final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-            templateEngine.process(path, ctx, response.getWriter());
+
+            connection.setAutoCommit(true);
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            ConnectionHandler.closeConnection(connection);
         }
     }
 
@@ -123,5 +140,4 @@ public class Registration extends HttpServlet {
     public void destroy() {
         ConnectionHandler.closeConnection(connection);
     }
-
 }

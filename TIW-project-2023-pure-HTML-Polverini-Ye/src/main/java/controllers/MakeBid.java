@@ -68,7 +68,11 @@ public class MakeBid extends HttpServlet {
         if(bidValue <= 0){
             request.setAttribute("msgBid", "Bid value must be greater than 0");
         } else {
+            Connection connection = null;
             try {
+                connection = ConnectionHandler.getConnection(getServletContext());
+                connection.setAutoCommit(false);
+
                 Auction auction = auctionDAO.findAuctionByIdAuction(idAuction);
 
                 if(userMail.equals(auction.getUserMail())) {
@@ -106,21 +110,31 @@ public class MakeBid extends HttpServlet {
                         request.setAttribute("msgBid", "Bid value too low (must be greater than the current bid value (" + maxBidValue + ") + min rise (" + minRise + "))");
                     }
                 }
+
+                if(isValid){
+                    try {
+                        bidDAO.createBid(bidValue, userMail, idAuction);
+                        request.setAttribute("msgBid", "Bid successfully created!");
+                        connection.commit();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error in db, bid not created. Please, retry later.");
+                        return;
+                    }
+                }
+
+                connection.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error in db. Please, retry later.");
-                return;
-            }
-            
-            if(isValid){
                 try {
-                    bidDAO.createBid(bidValue, userMail, idAuction);
-                    request.setAttribute("msgBid", "Bid successfully created!");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error in db, bid not created. Please, retry later.");
-                    return;
+                    if (connection != null) {
+                        connection.rollback();
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
                 }
+            } finally {
+                ConnectionHandler.closeConnection(connection);
             }
         }
 

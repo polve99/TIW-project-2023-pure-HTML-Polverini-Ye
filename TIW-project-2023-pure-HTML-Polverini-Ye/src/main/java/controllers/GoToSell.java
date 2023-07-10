@@ -134,8 +134,9 @@ public class GoToSell extends HttpServlet {
         	try {
     			imageList1 = articleDAO.findImagesByUser(user.getUserMail());
     		} catch (SQLException e) {
-    			// TODO Auto-generated catch block
     			e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error");
+                return;
     		}
         	List<String> imageList = new ArrayList<>();
         	for (String image : imageList1) {
@@ -144,8 +145,9 @@ public class GoToSell extends HttpServlet {
         			String name = article.findArticleByImage(image).getArticleName();
         			imageList.add(name);
         		} catch (SQLException e) {
-        			// TODO Auto-generated catch block
         			e.printStackTrace();
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error");
+                    return;
         		}
         	}
         	 
@@ -154,24 +156,18 @@ public class GoToSell extends HttpServlet {
         		ctx.setVariable("imageListName", imageList);
         	} else {
                 ctx.setVariable("NoArticle", "You have no articles at this time.");
-                //prova
                 ctx.setVariable("imageList", imageList1);
         	}
-            
 
             if (auctionListOpen.isEmpty()) {
-                
                 ctx.setVariable("NoOpenAuctionsMsg", "You have no open auctions at this time.");
-                //prova
                 ctx.setVariable("auctionInfoListOpen", auctionInfoList);
-             
             } else {
                 ctx.setVariable("auctionInfoListOpen", auctionInfoList);
             }
 
             if (ownClosedAuctionInfoList.isEmpty()) {
                 ctx.setVariable("NoWonAuctionsMsg", "You haven't any auctions closed yet.");
-                //prova
                 ctx.setVariable("auctionInfoListWon", ownClosedAuctionInfoList);
             } else {
                 ctx.setVariable("auctionInfoListWon", ownClosedAuctionInfoList);

@@ -23,7 +23,7 @@ import utilis.ConnectionHandler;
 
 @WebServlet("/CreateAuction")
 public class CreateAuction extends HttpServlet{
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     private Connection connection = null;
 
     public CreateAuction() {
@@ -38,66 +38,65 @@ public class CreateAuction extends HttpServlet{
     }
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
-    	ArrayList<Article> articleList = new ArrayList<Article>();
-    	User user = (User) request.getSession().getAttribute("user");
-    	
-    	int i = 0;
-    	float initialPrice = 0;
-    	int daysToAdd = 0;
-    	
-    	LocalDateTime dateTime = LocalDateTime.now();
-    	
-    	if(!isNumber(request.getParameter("expirationDate"))) {
-        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the duration must be a number");
-    		return;
+        ArrayList<Article> articleList = new ArrayList<Article>();
+        User user = (User) request.getSession().getAttribute("user");
+        
+        int i = 0;
+        float initialPrice = 0;
+        int daysToAdd = 0;
+        
+        LocalDateTime dateTime = LocalDateTime.now();
+        
+        if(!isNumber(request.getParameter("expirationDate"))) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the duration must be a number");
+            return;
         }
-    	
-    	try {
-    		daysToAdd = Integer.parseInt(request.getParameter("expirationDate")); 
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the number inserted doesn't have the right format");
-    		return;
-    	}
+        
+        try {
+            daysToAdd = Integer.parseInt(request.getParameter("expirationDate")); 
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the number inserted doesn't have the right format");
+            return;
+        }
         
         if (daysToAdd < 1 || daysToAdd > 20) {
-        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the number inserted doesn't respect the range of possibilities proposed");
-    		return;
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the number inserted doesn't respect the range of possibilities proposed");
+            return;
         }
 
         LocalDateTime newDateTime = dateTime.plusDays(daysToAdd); 
         Timestamp time = Timestamp.valueOf(newDateTime);
-    	
+        
         String minRise = request.getParameter("minRise");
         if(!isNumber(minRise)) {
-        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise must be a number");
-    		return;
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise must be a number");
+            return;
         }
         
         float rise = 0;
         try {
-        	rise = Float.parseFloat(minRise);
-        	if (rise <= 0) {
-        		response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise must be greater than zero");
-        		return;
-        	}
+            rise = Float.parseFloat(minRise);
+            if (rise <= 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise must be greater than zero");
+                return;
+            }
         } catch(Exception e) {
-        	e.printStackTrace();
-    		response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise inserted doesn't have the right format");
-    		return;
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "the rise inserted doesn't have the right format");
+            return;
         }
         
         if(minRise.length()<=0 || minRise.isEmpty()) {
-        	response.sendError(HttpServletResponse.SC_BAD_REQUEST,"invalid minimum rise");
-        	return;
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,"invalid minimum rise");
+            return;
         }
         
         String[] selectedImages = request.getParameterValues("selectedImages");
         
         if(selectedImages[0] == null) {
-        	response.sendError(HttpServletResponse.SC_BAD_REQUEST, "no articles selected");
-        	return;
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "no articles selected");
+            return;
         }
         
         AuctionDAO auctionDAO = new AuctionDAO(connection);
@@ -105,47 +104,48 @@ public class CreateAuction extends HttpServlet{
         
         int aucId = 0;
         
-        for(String image : selectedImages) {
-        	try {
-        		Article article = new Article();
-        		article = articleDAO.findArticleByImage(image);
-        		articleList.add(article);
-        		
-        	} catch (SQLException e) {
-    			e.printStackTrace();
-    			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error, retry later");
-    			return;
-    		}
-        	initialPrice += articleList.get(i).getArticlePrice();
-        	i++;
-        	System.out.println(initialPrice);
+        try {
+            connection.setAutoCommit(false);
+
+            for(String image : selectedImages) {
+                Article article = articleDAO.findArticleByImage(image);
+                articleList.add(article);
+                initialPrice += articleList.get(i).getArticlePrice();
+                i++;
+            }
+            
+            aucId = auctionDAO.createAuction(initialPrice, rise, time, user.getUserMail());
+            auctionDAO.addArticlesInAuction(aucId, articleList);
+
+            connection.commit();
+            
+        } catch (NumberFormatException | SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server db error, retry later");
+            
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
         
-        try {
-			aucId = auctionDAO.createAuction(initialPrice, rise, time, user.getUserMail());
-		} catch (NumberFormatException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        try {
-			auctionDAO.addArticlesInAuction(aucId, articleList);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
         response.sendRedirect("GoToSell");
-        
     }
     
     private boolean isNumber(String num) {
-    	Pattern numberPattern = Pattern.compile("\\d+");
-		if (num.length()>0) {
-			return numberPattern.matcher(num).matches();
-		} else {
-			return false;
-		}
+        Pattern numberPattern = Pattern.compile("\\d+");
+        if (num.length()>0) {
+            return numberPattern.matcher(num).matches();
+        } else {
+            return false;
+        }
     }
 
 }

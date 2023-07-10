@@ -62,13 +62,13 @@ public class GoToAuction extends HttpServlet {
         }
 
         int idAuction;
-        
+
         try {
             idAuction = Integer.parseInt(idAuctionParam);
             if(!auctionDAO.isAuctionInDB(idAuction)){
                 String errorString = "Previous idAuction in request not found. Back to previous page.";
                 request.setAttribute("errorString", errorString);
-                
+
                 //checks attribute 'from' to go back
                 if(session.getAttribute("from").equals("BuyPage")) {
                 	request.getRequestDispatcher("/GoToBuy").forward(request, response);
@@ -103,7 +103,7 @@ public class GoToAuction extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Internal db error in retrieving auction details");
             return;
         }
-        
+
         if(!isAuctionNotExpired){
             try{
                 closedAuctionInfo = auctionDAO.getAuctionClosedInfos(auction);
@@ -159,7 +159,9 @@ public class GoToAuction extends HttpServlet {
         }
 
         String path = "/WEB-INF/templates/" + template;
+
         templateEngine.process(path, ctx, response.getWriter());
+
     }
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

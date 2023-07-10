@@ -25,10 +25,9 @@ public class PreviousPageFilter extends HttpFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
 		String isFromPreviousPage = req.getParameter("prevPage");
-		//String isFromChangeLanguage = req.getParameter("langChanged");
 		int responseStatus = res.getStatus();
 		if (responseStatus == 200 && (isFromPreviousPage == null || !isFromPreviousPage.equals("y"))) {
-			String relativePath = req.getServletPath().substring(1); //to eliminate first /
+			String relativePath = req.getServletPath().substring(1);
 			if (req.getPathInfo() != null) relativePath += req.getPathInfo();
 			if (req.getQueryString() != null) relativePath += "?" + req.getQueryString();
 			User user = (User) req.getSession().getAttribute("user");

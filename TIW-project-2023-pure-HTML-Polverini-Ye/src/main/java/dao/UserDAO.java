@@ -16,8 +16,6 @@ public class UserDAO {
     }
 
     public User createUser(String userMail, String password, String name, String surname, String telephone, String address) throws SQLException {
-        int rows = 0;
-        User user = null;
         String query = "INSERT INTO dbaste.users (userMail, password, name, surname, telephone, address) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement pStatement = null;
 
@@ -29,7 +27,7 @@ public class UserDAO {
             pStatement.setString(4, surname);
             pStatement.setString(5, telephone);
             pStatement.setString(6, address);
-            /*rows = */pStatement.executeUpdate();
+            pStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException(e);
         } finally {
